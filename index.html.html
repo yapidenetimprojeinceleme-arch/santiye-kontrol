@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Şantiye Kontrol Sistemi</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Şantiye Kontrol">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0E2A3F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blueprint:#0E2A3F;
+    --blueprint-deep:#081C2A;
+    --grid-line:rgba(255,255,255,0.055);
+    --paper:#EEF0E7;
+    --paper-dim:#E2E5D8;
+    --ink:#1B231C;
+    --ink-soft:#5B6357;
+    --accent:#F2760C;
+    --accent-deep:#C85E06;
+    --accent-soft:#FBD9B3;
+    --ok:#2E7D5B;
+    --ok-soft:#D3E9DD;
+    --fail:#C4432E;
+    --fail-soft:#F5D9D1;
+    --radius:7px;
+    --font-d:'Space Grotesk',sans-serif;
+    --font-b:'IBM Plex Sans',sans-serif;
+    --font-m:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/38px 38px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/38px 38px,
+      var(--blueprint);
+    color:var(--paper);
+    font-family:var(--font-b);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  a{color:inherit;}
+  button{font-family:inherit;}
+  #app{max-width:760px;margin:0 auto;padding:28px 18px 80px;}
+
+  /* ---- Title block ---- */
+  .titleblock{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border:1.5px solid var(--paper-dim);border-radius:var(--radius);overflow:hidden;margin-bottom:22px;background:rgba(255,255,255,0.02);}
+  .titleblock__main{flex:1 1 240px;padding:14px 18px;border-right:1.5px solid var(--paper-dim);}
+  .titleblock__main h1{font-family:var(--font-d);font-size:1.35rem;letter-spacing:0.02em;margin:0 0 4px;font-weight:700;}
+  .titleblock__main p{margin:0;font-size:0.8rem;color:var(--paper-dim);font-family:var(--font-m);}
+  .titleblock__cell{padding:10px 16px;display:flex;flex-direction:column;justify-content:center;border-right:1.5px solid var(--paper-dim);min-width:96px;}
+  .titleblock__cell:last-child{border-right:none;}
+  .titleblock__cell span{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-soft);margin-bottom:2px;}
+  .titleblock__cell strong{font-family:var(--font-m);font-size:1.05rem;}
+
+  /* ---- New job button + form ---- */
+  .newjob-bar{display:flex;justify-content:flex-end;margin-bottom:16px;}
+  .btn{
+    font-family:var(--font-b);font-weight:600;font-size:0.85rem;
+    border:none;border-radius:5px;padding:9px 16px;cursor:pointer;
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .btn:focus-visible{outline:2px solid var(--accent-soft);outline-offset:2px;}
+  .btn-accent{background:var(--accent);color:#1B1105;}
+  .btn-accent:hover{background:var(--accent-deep);}
+  .btn-ghost{background:transparent;color:var(--paper-dim);border:1px solid var(--paper-dim);}
+  .btn-ghost:hover{color:var(--paper);border-color:var(--paper);}
+  .btn-text{background:none;color:var(--paper-dim);padding:6px 4px;font-size:0.78rem;text-decoration:underline;}
+  .btn-danger-text{background:none;color:var(--fail);padding:6px 4px;font-size:0.78rem;text-decoration:underline;}
+  .btn-card{background:#fff;color:var(--ink);border:1px solid #C7CBBC;font-family:var(--font-b);font-weight:600;font-size:0.78rem;padding:7px 12px;border-radius:5px;cursor:pointer;}
+  .btn-card:hover{background:#F5F6F0;}
+
+  .newjob-form{background:var(--paper);color:var(--ink);border-radius:var(--radius);padding:16px;margin-bottom:18px;box-shadow:0 4px 14px rgba(0,0,0,0.28);}
+  .newjob-form h3{margin:0 0 12px;font-family:var(--font-d);font-size:1rem;}
+  .field-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .field{flex:1 1 160px;display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);}
+  .field input[type=text], .field input[type=date], .field input[type=number], .field textarea, .field select{
+    font-family:var(--font-b);font-size:0.9rem;padding:8px 9px;border:1px solid #C7CBBC;border-radius:5px;background:#fff;color:var(--ink);
+  }
+  .field input:focus-visible, .field textarea:focus-visible, .field select:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:6px;}
+
+  /* ---- Tabs ---- */
+  .tabs{display:flex;gap:4px;border-bottom:1.5px solid var(--grid-line);margin-bottom:16px;}
+  .tab{
+    background:none;border:none;color:var(--paper-dim);font-size:0.85rem;font-weight:600;
+    padding:10px 4px;margin-right:18px;cursor:pointer;border-bottom:2.5px solid transparent;
+    font-family:var(--font-b);
+  }
+  .tab .count{font-family:var(--font-m);font-size:0.75rem;opacity:0.75;margin-left:5px;}
+  .tab.active{color:var(--paper);border-bottom-color:var(--accent);}
+  .tab:hover{color:var(--paper);}
+  .tab:focus-visible{outline:2px solid var(--accent-soft);outline-offset:2px;}
+
+  /* ---- İlçe group header ---- */
+  .ilce-header{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 8px;padding-bottom:6px;border-bottom:1.5px solid var(--grid-line);}
+  .ilce-header:first-child{margin-top:0;}
+  .ilce-header__name{font-family:var(--font-d);font-weight:700;font-size:0.92rem;color:var(--accent-soft);letter-spacing:0.03em;text-transform:uppercase;}
+  .ilce-header__count{font-family:var(--font-m);font-size:0.74rem;color:var(--paper-dim);}
+
+  /* ---- Empty state ---- */
+  .empty{padding:34px 12px;text-align:center;color:var(--paper-dim);border:1.5px dashed var(--grid-line);border-radius:var(--radius);font-size:0.9rem;}
+
+  /* ---- Job card ---- */
+  .job{background:var(--paper);color:var(--ink);border-radius:var(--radius);margin-bottom:12px;box-shadow:0 3px 10px rgba(0,0,0,0.22);overflow:hidden;border-left:5px solid var(--grid-line);}
+  .job.durum-bekleyen{border-left-color:#7C93A6;}
+  .job.durum-tamamlandi{border-left-color:var(--ok);}
+  .job.durum-sorun{border-left-color:var(--fail);}
+
+  .job__head{padding:13px 16px;cursor:pointer;display:flex;gap:12px;align-items:flex-start;}
+  .job__head:hover{background:rgba(0,0,0,0.02);}
+  .job__main{flex:1;min-width:0;}
+  .job__title-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .job__title{font-family:var(--font-d);font-weight:700;font-size:1.02rem;}
+  .job__ilce{font-size:0.76rem;color:var(--ink-soft);background:var(--paper-dim);padding:2px 7px;border-radius:10px;}
+  .job__meta{display:flex;gap:10px;align-items:center;margin-top:5px;flex-wrap:wrap;font-family:var(--font-m);font-size:0.76rem;color:var(--ink-soft);}
+  .badge-progress{padding:2px 7px;border-radius:10px;background:var(--paper-dim);font-size:0.72rem;}
+  .badge-progress.has-fail{background:var(--fail-soft);color:var(--fail);}
+  .job__fails{margin-top:8px;background:var(--fail-soft);border:1px solid var(--fail);border-radius:5px;padding:8px 10px;}
+  .job__fails-title{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--fail);margin-bottom:2px;}
+  .job__fails ul{list-style:none;margin:0;padding:0;}
+  .job__fails li{font-size:0.82rem;line-height:1.35;padding:6px 0;border-top:1px solid rgba(196,67,46,0.2);color:var(--ink);}
+  .job__fails li:first-child{border-top:none;}
+  .job__fails-group{font-family:var(--font-m);font-size:0.66rem;background:var(--fail);color:#fff;padding:1px 6px;border-radius:8px;margin-right:6px;white-space:nowrap;}
+  .job__fails-note{margin-top:3px;color:var(--fail);font-style:italic;font-size:0.8rem;}
+  .job__fails-note--empty{opacity:0.65;}
+  .job__notes-preview{margin-top:6px;font-size:0.82rem;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .job__chevron{font-family:var(--font-m);color:var(--ink-soft);font-size:0.9rem;padding-top:2px;}
+
+  /* ---- Expanded body ---- */
+  .job__body{padding:0 16px 16px;border-top:1px solid var(--paper-dim);}
+  .job__body-inner{padding-top:14px;}
+  .durum-switch{display:flex;gap:6px;margin-bottom:12px;}
+  .durum-btn{flex:1;padding:7px 6px;font-size:0.78rem;font-weight:600;border-radius:5px;border:1px solid #C7CBBC;background:#fff;color:var(--ink-soft);cursor:pointer;}
+  .durum-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  .job__notes textarea{width:100%;min-height:64px;resize:vertical;}
+
+  .job__footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:10px;}
+  .job__report-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+  /* ---- Checklist ---- */
+  .checklist{margin-top:16px;border-top:1px dashed #C7CBBC;padding-top:14px;}
+  .checklist__head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:4px;}
+  .checklist__head h4{margin:0;font-family:var(--font-d);font-size:0.92rem;}
+  .checklist__summary{font-family:var(--font-m);font-size:0.76rem;color:var(--ink-soft);}
+
+  .stack{display:flex;flex-direction:column;gap:3px;margin-bottom:14px;border:1px solid var(--paper-dim);border-radius:5px;padding:8px;background:#fff;}
+  .stack__row{display:grid;grid-template-columns:96px 1fr 46px;align-items:center;gap:8px;font-size:0.72rem;}
+  .stack__label{font-family:var(--font-m);color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .stack__bar{height:9px;border-radius:3px;background:var(--paper-dim);overflow:hidden;position:relative;}
+  .stack__fill{height:100%;background:var(--ok);}
+  .stack__fill.has-fail{background:var(--fail);}
+  .stack__frac{font-family:var(--font-m);text-align:right;color:var(--ink-soft);}
+
+  .chips{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+  .chip{font-family:var(--font-m);font-size:0.72rem;padding:4px 9px;border-radius:12px;background:var(--paper-dim);color:var(--ink-soft);}
+
+  .group{border:1px solid var(--paper-dim);border-radius:5px;margin-bottom:8px;overflow:hidden;}
+  .group__head{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;cursor:pointer;background:#fff;}
+  .group__head:hover{background:#fafaf6;}
+  .group__title{font-size:0.85rem;font-weight:600;}
+  .group__frac{font-family:var(--font-m);font-size:0.75rem;color:var(--ink-soft);}
+  .group__items{padding:2px 11px 9px;background:#fff;}
+
+  .item{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-top:1px solid #EFF1E8;}
+  .item:first-child{border-top:none;}
+  .item__status{
+    flex:none;width:24px;height:24px;border-radius:5px;border:1.5px solid #C7CBBC;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.85rem;font-weight:700;
+    background:#fff;color:var(--ink-soft);margin-top:1px;
+  }
+  .item__status:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .item__status.uygun{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);}
+  .item__status.uygunDegil{background:var(--fail-soft);border-color:var(--fail);color:var(--fail);}
+  .item__body{flex:1;min-width:0;}
+  .item__text{font-size:0.86rem;line-height:1.35;}
+  .item__note{margin-top:6px;}
+  .item__note input{width:100%;font-size:0.8rem;padding:6px 8px;border:1px solid var(--fail-soft);border-radius:4px;background:#FFF9F6;}
+
+  /* ---- Blok (multi-block) ---- */
+  .blok{border:1px solid var(--accent-soft);border-radius:6px;margin-bottom:10px;overflow:hidden;background:#fff;}
+  .blok__head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;cursor:pointer;background:#FDF4E9;}
+  .blok__head:hover{background:#FCEBD4;}
+  .blok__title{font-family:var(--font-d);font-weight:700;font-size:0.88rem;color:var(--accent-deep);}
+  .blok__frac{font-family:var(--font-m);font-size:0.74rem;color:var(--ink-soft);}
+  .blok__frac.has-fail{color:var(--fail);font-weight:600;}
+  .blok__body{padding:12px;}
+
+  footer{text-align:center;margin-top:26px;}
+  .loading{padding:60px 0;text-align:center;color:var(--paper-dim);font-family:var(--font-m);}
+
+  @media (max-width:480px){
+    .stack__row{grid-template-columns:74px 1fr 40px;}
+    .titleblock__cell{min-width:80px;}
+  }
+
+  /* ---- Print report ---- */
+  #print-report{display:none;}
+  @media print{
+    body{background:#fff !important;}
+    #app{display:none !important;}
+    #print-report{display:block !important;background:#fff;color:#111;font-family:var(--font-b);}
+    #print-report h1{font-family:var(--font-d);font-size:1.4rem;margin:0 0 2px;}
+    #print-report h2{font-family:var(--font-d);font-size:1.05rem;margin-top:18px;border-bottom:1px solid #333;padding-bottom:3px;}
+    #print-report h3.print-blok-title{font-family:var(--font-d);font-size:1rem;margin-top:22px;background:#eee;padding:5px 8px;}
+    #print-report h4{font-size:0.85rem;margin:12px 0 4px;}
+    #print-report table.print-info{margin-bottom:10px;border-collapse:collapse;}
+    #print-report table.print-info td{padding:2px 10px 2px 0;font-size:0.85rem;vertical-align:top;}
+    #print-report table.print-info td:first-child{color:#555;width:90px;}
+    #print-report .print-date{font-size:0.78rem;color:#555;margin-bottom:10px;}
+    #print-report .print-progress{font-weight:600;font-size:0.9rem;}
+    #print-report ul.print-fails{padding-left:18px;margin:6px 0;}
+    #print-report ul.print-fails li{margin-bottom:6px;font-size:0.85rem;}
+    #print-report table.print-items{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:0.76rem;}
+    #print-report table.print-items td{border-bottom:1px solid #ddd;padding:3px 5px;}
+    #print-report td.print-mark{width:20px;text-align:center;font-weight:700;}
+    #print-report .print-sign{margin-top:34px;font-size:0.85rem;}
+  }
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+<div id="app"><div class="loading">Yükleniyor…</div></div>
+<div id="print-report"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "santiye-kontrol-jobs-v1";
+
+  // Firebase config - kullanıcı gerçek bilgileri verince buraya yapıştırılacak.
+  // apiKey "BURAYA" içerdiği sürece Firebase devre dışı kalır, uygulama eskisi gibi çalışır.
+  var FIREBASE_CONFIG = {
+    apiKey: "AIzaSyB6ea9qtfpsJGZpSu4LsaC9RZWTjzEouYc",
+    authDomain: "santiye-kontrol-53c1c.firebaseapp.com",
+    databaseURL: "https://santiye-kontrol-53c1c-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "santiye-kontrol-53c1c",
+    storageBucket: "santiye-kontrol-53c1c.firebasestorage.app",
+    messagingSenderId: "706582340685",
+    appId: "1:706582340685:web:a904e9a84a432cd6a7a804"
+  };
+  var fbRef = null, fbReady = false;
+
+  var CHECKLIST_GROUPS = [
+    { key:"temel", label:"Temel", structural:true, items:[
+      "Tanıtıcı tabela şantiyeye yerleştirildi.",
+      "Çevre güvenliği alındı.",
+      "İşyeri teslim tutanağı onaylandı.",
+      "Haritacının temel alt kotu alması sağlandı.",
+      "Grobeton döküldü.",
+      "Demir donatı numune aldırıldı.",
+      "Demir donatı numune sonuçları mevcut.",
+      "Pis su çukurunun temel içinde olup olmadığına dikkat edildi.",
+      "Temel topraklaması kontrol edildi, dışarıya uç bırakıldı, şeridin TSE'li olmasına ve klamenslere dikkat edildi.",
+      "Temel bohçalaması projesine uygun yapılmıştır.",
+      "Temel yalıtımı sistem detayına uygun yapıldı.",
+      "Radye temel alt ve üst donatı aralıkları uygundur.",
+      "Alt ve üst donatı sayıları uygundur.",
+      "Sehpa yüksekliği ve sayısı uygundur.",
+      "Temel derinliği ve ampatmanı projeye uygundur.",
+      "Boğaz etriyesi yapılmıştır.",
+      "Kolon ve perde filiz boyu uygundur.",
+      "Asansör ölçüleri ve radye ile donatı geçişleri uygundur.",
+      "Filiz boyu ve donatı sayıları kontrol edildi. Başlık (ayna) donatı sayısı ve şekli kolon aplikasyonuna uygundur.",
+      "Aks aralıkları tek tek ölçüldü, kolonun doğru yere konumlandırılmasına dikkat edildi."
+    ]},
+    { key:"bodrum", label:"Bodrum Kat", structural:true, items:[
+      "Bodrum kat yüksekliği, kiriş ölçüleri ve döşeme derinliği uygundur.",
+      "Bodrum etriye aralıkları, kiriş açılımları, ilaveler ve tellemeler uygundur.",
+      "Kuranglez şekli ve ölçüleri uygundur. Bina girişine denk gelen kuranglez yoktur.",
+      "Bodrum perde yalıtımı projesine uygun yapıldı.",
+      "Merdiven genişliği, kollar arası mesafe, sahanlık ölçüleri ve rıht uygundur.",
+      "Bodrum tavanında bina giriş kotuna denk gelen döşeme kotunun farklı olduğuna dikkat edildi.",
+      "Şaft sayısı ve çaplarına dikkat edildi.",
+      "Donatıların bitiş noktalarında gönye var mı?"
+    ]},
+    { key:"zemin", label:"Zemin Kat", structural:true, items:[
+      "Zemin kat yüksekliğine ve giriş kotunun döşeme ile aynı kot olup olmadığına dikkat edildi.",
+      "Zemin kat çıkmalarına ve çıkmaların altındaki konsol kirişlere dikkat edildi. Asma kat galeri boşluğuna dikkat edildi.",
+      "Filiz boyu, etriye ve çirozları uygundur. Başlık (ayna) donatı sayısı ve şekli kolon aplikasyonuna uygundur.",
+      "Kiriş sıklaştırma aralıkları, montaj, gövde, düz sayıları ve tellemeler uygundur.",
+      "Balkon parapetleri projeye göre çift donatılı ve uygun yükseklikte yapıldı."
+    ]},
+    { key:"normal", label:"Normal Kat", structural:true, items:[
+      "Normal kat filiz boyu ve sayısı, kiriş açılımları adet ve çapları uygundur.",
+      "Normal kat yüksekliği, konsollar ve döşeme kalınlığı uygundur. Farklı döşeme kotu yoktur.",
+      "Normal kat şaft ölçülerine dikkat edildi, şaftların etrafına çapraz donatı attırıldı.",
+      "Balkon parapetleri projeye göre çift donatılı ve uygun yükseklikte yapıldı."
+    ]},
+    { key:"sonkat", label:"Son Kat / Çatı", structural:true, items:[
+      "Son kat kolon filiz gönyeleri yapılmış mı, çatı saçağı ölçüsü uygun mu?",
+      "Enerji terası ölçüleri ve yüksekliği uygun mu?",
+      "Çatı çıkış kapağı yapılmış mı? Çatı parapeti projesine uygun mu yapıldı?",
+      "Çatı cinsi, eğimi, dikme aralıkları, çift kuşaklama, lamalar, takozlar, aşık ve mertekler uygundur.",
+      "Yağmur suyu sistemi projesine uygun yapıldı."
+    ]},
+    { key:"ince", label:"İnce İşler / Tesisat", structural:false, items:[
+      "Duvar cinsi, kirişe diş yaptığı kısımlar ve ölçüleri uygundur.",
+      "Yerden ısıtma veya radyatör projesine uygun uygulama yapıldı.",
+      "Mutfak pis su gider borusu uygundur.",
+      "Dış cephe yalıtımı uygundur. Balkonlardaki mantolamaya dikkat edildi."
+    ]},
+    { key:"genel", label:"Genel", structural:false, items:[
+      "Yapı denetleme defterine imalatlar işlendi."
+    ]}
+  ];
+  CHECKLIST_GROUPS.forEach(function(g){
+    g.items = g.items.map(function(text, i){ return { id: g.key + "-" + (i+1), text: text }; });
+  });
+  var TOTAL_ITEMS = CHECKLIST_GROUPS.reduce(function(n,g){ return n + g.items.length; }, 0);
+  var STRUCTURAL_GROUPS = CHECKLIST_GROUPS.filter(function(g){ return g.structural; });
+  var EXTRA_GROUPS = CHECKLIST_GROUPS.filter(function(g){ return !g.structural; });
+
+  // Kullanıcının istediği öncelik sırası: Şahinbey, Şehitkamil, Oğuzeli, Nizip, Araban önce; kalanlar sonra.
+  var GAZIANTEP_ILCELER = ["Şahinbey","Şehitkamil","Oğuzeli","Nizip","Araban","İslahiye","Karkamış","Nurdağı","Yavuzeli"];
+  function ilceOptionsHtml(selected){
+    var html = '<option value="">İlçe seçin</option>';
+    GAZIANTEP_ILCELER.forEach(function(il){
+      html += '<option value="' + il + '"' + (selected===il ? ' selected' : '') + '>' + il + '</option>';
+    });
+    return html;
+  }
+
+  var jobs = [];
+  var ui = { tab:"bekleyen", expanded:null, openGroups:{}, openBlocks:{}, showForm:false,
+    draft:{ isAdi:"", tarih: todayStr(), ilce:"", blokSayisi:"" } };
+  var saveTimer = null;
+
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+  function genId(){ return "j" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function escapeHtml(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
+    });
+  }
+  function formatTr(dateStr){
+    if(!dateStr) return "-";
+    var p = dateStr.split("-");
+    if(p.length!==3) return dateStr;
+    return p[2] + "." + p[1] + "." + p[0];
+  }
+  function durumLabel(d){ return d==="bekleyen" ? "Bekleyen" : (d==="tamamlandi" ? "Tamamlandı" : "Sorun"); }
+
+  function hasWS(){
+    try{ return !!(window.storage && typeof window.storage.get === "function"); }
+    catch(e){ return false; }
+  }
+  function loadFromLocal(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      jobs = raw ? JSON.parse(raw) : [];
+    }catch(e){ jobs = []; }
+  }
+  function saveToLocal(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs)); }
+    catch(e){ console.error("Yerel kayıt hatası:", e); }
+  }
+
+  function firebaseConfigured(){
+    return FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey.indexOf("BURAYA") === -1;
+  }
+  function jobsToFirebaseObj(){
+    var obj = {};
+    jobs.forEach(function(j){ obj[j.id] = j; });
+    return obj;
+  }
+  function firebaseObjToJobs(obj){
+    if(!obj) return [];
+    return Object.keys(obj).map(function(k){ return obj[k]; });
+  }
+  function isTypingNow(){
+    var a = document.activeElement;
+    return !!(a && (a.tagName==="INPUT" || a.tagName==="TEXTAREA" || a.tagName==="SELECT"));
+  }
+  function initFirebase(){
+    if(!firebaseConfigured()) return false;
+    if(typeof firebase === "undefined") return false;
+    try{
+      if(!firebase.apps || !firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+      fbRef = firebase.database().ref("jobs");
+      fbReady = true;
+      return true;
+    }catch(e){ console.error("Firebase başlatma hatası:", e); return false; }
+  }
+
+  function loadJobs(){
+    return new Promise(function(resolve){
+      if(initFirebase()){
+        var first = true;
+        fbRef.on("value", function(snap){
+          var newJobs = firebaseObjToJobs(snap.val());
+          if(first){
+            jobs = newJobs;
+            first = false;
+            resolve();
+            return;
+          }
+          if(isTypingNow()) return; // aktif düzenlemeyi bozma, bir sonraki render'da yansır
+          jobs = newJobs;
+          render();
+        }, function(err){
+          console.error("Firebase okuma hatası:", err);
+          if(first){ loadFromLocal(); first = false; resolve(); }
+        });
+      } else if(hasWS()){
+        window.storage.get(STORAGE_KEY, true).then(function(res){
+          jobs = (res && res.value) ? JSON.parse(res.value) : [];
+          resolve();
+        }).catch(function(){ loadFromLocal(); resolve(); });
+      } else {
+        loadFromLocal();
+        resolve();
+      }
+    });
+  }
+  function saveJobsNow(){
+    if(fbReady && fbRef){
+      try{ fbRef.set(jobsToFirebaseObj()); }catch(e){ console.error("Firebase yazma hatası:", e); }
+    }
+    if(hasWS()){
+      try{ window.storage.set(STORAGE_KEY, JSON.stringify(jobs), true).catch(function(){}); }
+      catch(e){}
+    }
+    saveToLocal();
+  }
+  function scheduleSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveJobsNow, 500);
+  }
+
+  function getJob(id){ return jobs.find(function(j){ return j.id===id; }); }
+
+  /* ---- Blok / hedef (target) soyutlaması ----
+     "target" checklist+checklistNotlar taşıyan herhangi bir nesne: ya işin kendisi
+     (bloksuz basit iş) ya da bir blok kaydı (job.bloklar[i]). Böylece checklist
+     mantığı tek kod yolundan hem basit işler hem çoklu blok işleri için çalışır. */
+
+  function jobBlocks(job){
+    if(job.bloklar && job.bloklar.length){
+      return job.bloklar.map(function(b,i){ return { label: b.ad || ("Blok "+(i+1)), target: b, index: i }; });
+    }
+    return [{ label: null, target: job, index: null }];
+  }
+  function blokAttr(blokIndex){ return (blokIndex===null || blokIndex===undefined) ? "" : String(blokIndex); }
+  function pathKey(jobId, blokIndex, groupKeyStr){
+    var seg = (blokIndex===null || blokIndex===undefined || blokIndex==="") ? "j" : ("b"+blokIndex);
+    return jobId + "|" + seg + "|" + groupKeyStr;
+  }
+  function resolveTarget(jobId, blokAttrVal){
+    var job = getJob(jobId);
+    if(!job) return null;
+    if(blokAttrVal==="" || blokAttrVal==null) return job;
+    var idx = parseInt(blokAttrVal,10);
+    if(isNaN(idx)) return job;
+    return (job.bloklar && job.bloklar[idx]) || null;
+  }
+
+  function targetProgress(target){
+    var c = (target && target.checklist) || {};
+    var marked=0, fails=0;
+    Object.keys(c).forEach(function(k){
+      if(c[k]==="uygun") marked++;
+      else if(c[k]==="uygunDegil"){ marked++; fails++; }
+    });
+    return { marked:marked, fails:fails, total:TOTAL_ITEMS };
+  }
+  function targetGroupProgress(target, group){
+    var c = (target && target.checklist) || {};
+    var ok=0, fail=0;
+    group.items.forEach(function(it){
+      if(c[it.id]==="uygun") ok++;
+      else if(c[it.id]==="uygunDegil") fail++;
+    });
+    return { ok:ok, fail:fail, total: group.items.length };
+  }
+  function targetFailedItems(target){
+    var c = (target && target.checklist) || {};
+    var notes = (target && target.checklistNotlar) || {};
+    var out = [];
+    CHECKLIST_GROUPS.forEach(function(g){
+      g.items.forEach(function(it){
+        if(c[it.id]==="uygunDegil") out.push({ groupLabel: g.label, itemId: it.id, text: it.text, note: notes[it.id] || "" });
+      });
+    });
+    return out;
+  }
+
+  function jobProgress(job){
+    var blocks = jobBlocks(job);
+    var marked=0, fails=0, total=0;
+    blocks.forEach(function(b){
+      var p = targetProgress(b.target);
+      marked += p.marked; fails += p.fails; total += p.total;
+    });
+    return { marked:marked, fails:fails, total:total };
+  }
+  function failedItems(job){
+    var blocks = jobBlocks(job);
+    var out = [];
+    blocks.forEach(function(b){
+      targetFailedItems(b.target).forEach(function(item){
+        if(b.label) item.groupLabel = b.label + " · " + item.groupLabel;
+        out.push(item);
+      });
+    });
+    return out;
+  }
+
+  function sortedJobs(tab){
+    var list = jobs.filter(function(j){ return j.durum===tab; });
+    list.sort(function(a,b){
+      if(tab==="tamamlandi") return (b.tarih||"").localeCompare(a.tarih||"");
+      return (a.tarih||"").localeCompare(b.tarih||"");
+    });
+    return list;
+  }
+
+  function groupedByIlce(tab){
+    var list = sortedJobs(tab);
+    var order = GAZIANTEP_ILCELER.concat(["__none__"]);
+    var buckets = {};
+    order.forEach(function(k){ buckets[k]=[]; });
+    list.forEach(function(job){
+      var key = (job.ilce && buckets.hasOwnProperty(job.ilce)) ? job.ilce : "__none__";
+      buckets[key].push(job);
+    });
+    var result = [];
+    order.forEach(function(key){
+      if(buckets[key].length) result.push({ label: key==="__none__" ? "İlçe Belirtilmemiş" : key, jobs: buckets[key] });
+    });
+    return result;
+  }
+
+  function counts(){
+    return {
+      bekleyen: jobs.filter(function(j){return j.durum==="bekleyen";}).length,
+      tamamlandi: jobs.filter(function(j){return j.durum==="tamamlandi";}).length,
+      sorun: jobs.filter(function(j){return j.durum==="sorun";}).length
+    };
+  }
+
+  /* ---------------- REPORT (kopyala / yazdır) ---------------- */
+
+  function buildReportText(job){
+    var prog = jobProgress(job);
+    var fails = failedItems(job);
+    var lines = [];
+    lines.push("ŞANTİYE KONTROL RAPORU");
+    lines.push("İş: " + job.isAdi);
+    if(job.ilce) lines.push("İlçe: " + job.ilce);
+    lines.push("Tarih: " + formatTr(job.tarih));
+    lines.push("Durum: " + durumLabel(job.durum));
+    if(job.bloklar && job.bloklar.length) lines.push("Blok Sayısı: " + job.bloklar.length);
+    lines.push("");
+    lines.push("İlerleme: " + prog.marked + "/" + prog.total + " madde değerlendirildi, " + prog.fails + " uygunsuz");
+    if(fails.length){
+      lines.push("");
+      lines.push("UYGUNSUZ MADDELER:");
+      fails.forEach(function(f){
+        lines.push("- [" + f.groupLabel + "] " + f.text);
+        lines.push("  Not: " + (f.note || "girilmedi"));
+      });
+    }
+    if(job.notlar){ lines.push(""); lines.push("Genel Notlar: " + job.notlar); }
+    lines.push("");
+    lines.push("Rapor tarihi: " + formatTr(todayStr()));
+    return lines.join("\n");
+  }
+
+  function buildReportHtml(job){
+    var prog = jobProgress(job);
+    var fails = failedItems(job);
+    var html = '<div class="print-header"><h1>ŞANTİYE KONTROL RAPORU</h1><div class="print-date">Rapor tarihi: ' + formatTr(todayStr()) + '</div></div>';
+    html += '<table class="print-info"><tr><td>İş</td><td>' + escapeHtml(job.isAdi) + '</td></tr>';
+    if(job.ilce) html += '<tr><td>İlçe</td><td>' + escapeHtml(job.ilce) + '</td></tr>';
+    html += '<tr><td>Tarih</td><td>' + formatTr(job.tarih) + '</td></tr>';
+    html += '<tr><td>Durum</td><td>' + durumLabel(job.durum) + '</td></tr>';
+    if(job.bloklar && job.bloklar.length) html += '<tr><td>Blok Sayısı</td><td>' + job.bloklar.length + '</td></tr>';
+    html += '</table>';
+    html += '<p class="print-progress">' + prog.marked + '/' + prog.total + ' madde değerlendirildi · ' + prog.fails + ' uygunsuz</p>';
+    if(fails.length){
+      html += '<h2>Uygunsuz Maddeler</h2><ul class="print-fails">';
+      fails.forEach(function(f){
+        html += '<li><strong>[' + escapeHtml(f.groupLabel) + ']</strong> ' + escapeHtml(f.text) + (f.note ? '<br><em>Not: ' + escapeHtml(f.note) + '</em>' : '') + '</li>';
+      });
+      html += '</ul>';
+    }
+    html += '<h2>Checklist Detayı</h2>';
+    jobBlocks(job).forEach(function(b){
+      if(b.label) html += '<h3 class="print-blok-title">' + escapeHtml(b.label) + '</h3>';
+      CHECKLIST_GROUPS.forEach(function(g){
+        html += '<h4>' + g.label + '</h4><table class="print-items">';
+        g.items.forEach(function(it){
+          var st = (b.target.checklist && b.target.checklist[it.id]) || "-";
+          var label = st==="uygun" ? "Uygun" : (st==="uygunDegil" ? "Uygun Değil" : "Değerlendirilmedi");
+          html += '<tr><td class="print-mark">' + (st==="uygun"?"✓":st==="uygunDegil"?"✕":"–") + '</td><td>' + escapeHtml(it.text) + '</td><td>' + label + '</td></tr>';
+        });
+        html += '</table>';
+      });
+    });
+    if(job.notlar) html += '<h2>Genel Notlar</h2><p>' + escapeHtml(job.notlar).replace(/\n/g,'<br>') + '</p>';
+    html += '<div class="print-sign">Kontrol Eden: ______________________ &nbsp;&nbsp;&nbsp; İmza: ______________________</div>';
+    return html;
+  }
+
+  function copyToClipboard(text){
+    function ok(){ alert("Rapor panoya kopyalandı. İstediğin yere (WhatsApp, e-posta...) yapıştırabilirsin."); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try{ document.execCommand("copy"); ok(); }
+      catch(e){ prompt("Kopyalamak için metni seçip Ctrl+C yapın:", text); }
+      document.body.removeChild(ta);
+    }
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(ok).catch(fallback);
+      } else { fallback(); }
+    }catch(e){ fallback(); }
+  }
+  function copyReport(jobId){
+    var job = getJob(jobId); if(!job) return;
+    copyToClipboard(buildReportText(job));
+  }
+  function printReport(jobId){
+    var job = getJob(jobId); if(!job) return;
+    document.getElementById("print-report").innerHTML = buildReportHtml(job);
+    window.print();
+  }
+
+  /* ---------------- RENDER ---------------- */
+
+  function render(){
+    var app = document.getElementById("app");
+    var c = counts();
+    var html = "";
+
+    html += renderTitleblock(c);
+    html += renderNewJobBar();
+    if(ui.showForm) html += renderNewJobForm();
+    html += renderTabs(c);
+
+    var groups = groupedByIlce(ui.tab);
+    if(groups.length===0){
+      html += '<div class="empty">' + emptyMessage(ui.tab) + '</div>';
+    } else {
+      groups.forEach(function(grp){
+        html += '<div class="ilce-header"><span class="ilce-header__name">' + escapeHtml(grp.label) + '</span><span class="ilce-header__count">' + grp.jobs.length + ' iş</span></div>';
+        grp.jobs.forEach(function(job){ html += renderJobCard(job); });
+      });
+    }
+
+    html += '<footer><button class="btn-text" data-action="reset-data">Verileri sıfırla</button></footer>';
+
+    app.innerHTML = html;
+    bindTextInputs();
+  }
+
+  function emptyMessage(tab){
+    if(tab==="bekleyen") return "Bekleyen iş yok. Sağ üstten yeni iş ekleyerek başla.";
+    if(tab==="tamamlandi") return "Henüz tamamlanan iş yok.";
+    return "Sorunlu işaretlenmiş iş yok.";
+  }
+
+  function renderTitleblock(c){
+    var d = new Date();
+    var trDate = d.getDate() + "." + (d.getMonth()+1) + "." + d.getFullYear();
+    return '' +
+    '<div class="titleblock">' +
+      '<div class="titleblock__main"><h1>ŞANTİYE KONTROL SİSTEMİ</h1><p>saha kontrol takip formu</p></div>' +
+      '<div class="titleblock__cell"><span>Tarih</span><strong>' + trDate + '</strong></div>' +
+      '<div class="titleblock__cell"><span>Bekleyen</span><strong>' + c.bekleyen + '</strong></div>' +
+    '</div>';
+  }
+
+  function renderNewJobBar(){
+    return '<div class="newjob-bar"><button class="btn btn-accent" data-action="toggle-form">' +
+      (ui.showForm ? "Vazgeç" : "+ Yeni İş") + '</button></div>';
+  }
+
+  function renderNewJobForm(){
+    return '' +
+    '<div class="newjob-form">' +
+      '<h3>Yeni İş</h3>' +
+      '<div class="field-row">' +
+        '<div class="field"><label>İş Adı</label><input type="text" id="draft-isadi" placeholder="örn. Temel Kontrolü" value="' + escapeHtml(ui.draft.isAdi) + '"></div>' +
+        '<div class="field"><label>Tarih</label><input type="date" id="draft-tarih" value="' + escapeHtml(ui.draft.tarih) + '"></div>' +
+      '</div>' +
+      '<div class="field-row">' +
+        '<div class="field"><label>İlçe</label><select id="draft-ilce">' + ilceOptionsHtml(ui.draft.ilce) + '</select></div>' +
+        '<div class="field"><label>Blok Sayısı</label><input type="number" min="0" id="draft-blok" placeholder="opsiyonel, çoklu blok" value="' + escapeHtml(ui.draft.blokSayisi) + '"></div>' +
+      '</div>' +
+      '<div class="form-actions">' +
+        '<button class="btn btn-ghost" data-action="cancel-form">İptal</button>' +
+        '<button class="btn btn-accent" data-action="submit-form">İşi Ekle</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderTabs(c){
+    function tabBtn(key,label,n){
+      return '<button class="tab' + (ui.tab===key?' active':'') + '" data-action="switch-tab" data-tab="' + key + '">' + label + '<span class="count">' + n + '</span></button>';
+    }
+    return '<div class="tabs">' +
+      tabBtn("bekleyen","Bekleyen",c.bekleyen) +
+      tabBtn("tamamlandi","Tamamlanan",c.tamamlandi) +
+      tabBtn("sorun","Sorun",c.sorun) +
+      '</div>';
+  }
+
+  function renderJobCard(job){
+    var expanded = ui.expanded === job.id;
+    var prog = jobProgress(job);
+    var notesPreview = (job.notlar||"").trim();
+    var fails = failedItems(job);
+
+    var html = '<div class="job durum-' + job.durum + '">';
+    html += '<div class="job__head" data-action="expand-job" data-job-id="' + job.id + '">';
+    html += '<div class="job__main">';
+    html += '<div class="job__title-row"><span class="job__title">' + escapeHtml(job.isAdi || "(isimsiz iş)") + '</span>';
+    if(job.ilce) html += '<span class="job__ilce">' + escapeHtml(job.ilce) + '</span>';
+    if(job.bloklar && job.bloklar.length) html += '<span class="job__ilce">' + job.bloklar.length + ' blok</span>';
+    html += '</div>';
+    html += '<div class="job__meta"><span>' + formatTr(job.tarih) + '</span>';
+    if(prog.marked>0) html += '<span class="badge-progress' + (prog.fails>0?' has-fail':'') + '">' + prog.marked + '/' + prog.total + (prog.fails>0 ? ' · ' + prog.fails + ' uygunsuz' : '') + '</span>';
+    html += '</div>';
+    if(fails.length){
+      html += '<div class="job__fails"><div class="job__fails-title">Uygunsuz (' + fails.length + ')</div><ul>';
+      fails.forEach(function(f){
+        html += '<li><span class="job__fails-group">' + escapeHtml(f.groupLabel) + '</span>' + escapeHtml(f.text);
+        html += '<div class="job__fails-note' + (f.note?'':' job__fails-note--empty') + '">→ ' + (f.note ? escapeHtml(f.note) : 'not girilmedi') + '</div>';
+        html += '</li>';
+      });
+      html += '</ul></div>';
+    }
+    if(notesPreview) html += '<div class="job__notes-preview">' + escapeHtml(notesPreview) + '</div>';
+    html += '</div>';
+    html += '<div class="job__chevron">' + (expanded ? "▲" : "▼") + '</div>';
+    html += '</div>';
+
+    if(expanded) html += renderJobBody(job);
+    html += '</div>';
+    return html;
+  }
+
+  function renderJobBody(job){
+    var html = '<div class="job__body"><div class="job__body-inner">';
+
+    html += '<div class="field-row">';
+    html += '<div class="field"><label>İş Adı</label><input type="text" data-field="isAdi" data-job-id="' + job.id + '" value="' + escapeHtml(job.isAdi) + '"></div>';
+    html += '<div class="field"><label>Tarih</label><input type="date" data-field="tarih" data-job-id="' + job.id + '" value="' + escapeHtml(job.tarih) + '"></div>';
+    html += '</div>';
+    html += '<div class="field-row">';
+    html += '<div class="field"><label>İlçe</label><select data-field="ilce" data-job-id="' + job.id + '">' + ilceOptionsHtml(job.ilce||"") + '</select></div>';
+    html += '</div>';
+
+    html += '<div class="durum-switch">';
+    [["bekleyen","Bekleyen"],["tamamlandi","Tamamlandı"],["sorun","Sorun"]].forEach(function(d){
+      html += '<button class="durum-btn' + (job.durum===d[0]?' active':'') + '" data-action="set-durum" data-job-id="' + job.id + '" data-durum="' + d[0] + '">' + d[1] + '</button>';
+    });
+    html += '</div>';
+
+    html += '<div class="field job__notes"><label>Genel Notlar</label><textarea data-field="notlar" data-job-id="' + job.id + '" placeholder="Ek açıklama, eksik, hatırlatma...">' + escapeHtml(job.notlar||"") + '</textarea></div>';
+
+    html += renderChecklist(job);
+
+    html += '<div class="job__footer">';
+    html += '<div class="job__report-actions">';
+    html += '<button class="btn-card" data-action="copy-report" data-job-id="' + job.id + '">Metni Kopyala</button>';
+    html += '<button class="btn-card" data-action="print-report" data-job-id="' + job.id + '">Yazdır / PDF</button>';
+    html += '</div>';
+    html += '<button class="btn-danger-text" data-action="delete-job" data-job-id="' + job.id + '">İşi Sil</button>';
+    html += '</div>';
+
+    html += '</div></div>';
+    return html;
+  }
+
+  function renderStackAndChips(target){
+    var html = '<div class="stack">';
+    STRUCTURAL_GROUPS.slice().reverse().forEach(function(g){
+      var gp = targetGroupProgress(target, g);
+      var pct = gp.total ? Math.round((gp.ok+gp.fail)/gp.total*100) : 0;
+      html += '<div class="stack__row"><span class="stack__label">' + g.label + '</span>';
+      html += '<span class="stack__bar"><span class="stack__fill' + (gp.fail>0?' has-fail':'') + '" style="width:' + pct + '%"></span></span>';
+      html += '<span class="stack__frac">' + (gp.ok+gp.fail) + '/' + gp.total + '</span></div>';
+    });
+    html += '</div><div class="chips">';
+    EXTRA_GROUPS.forEach(function(g){
+      var gp = targetGroupProgress(target, g);
+      html += '<span class="chip">' + g.label + ': ' + (gp.ok+gp.fail) + '/' + gp.total + '</span>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function renderGroups(job, target, blokIndex){
+    var html = "";
+    CHECKLIST_GROUPS.forEach(function(g){
+      var gp = targetGroupProgress(target, g);
+      var key = pathKey(job.id, blokIndex, g.key);
+      var open = !!ui.openGroups[key];
+      html += '<div class="group">';
+      html += '<div class="group__head" data-action="toggle-group" data-job-id="' + job.id + '" data-blok="' + blokAttr(blokIndex) + '" data-group="' + g.key + '">';
+      html += '<span class="group__title">' + (open?"▾ ":"▸ ") + g.label + '</span><span class="group__frac">' + (gp.ok+gp.fail) + '/' + gp.total + '</span></div>';
+      if(open){
+        html += '<div class="group__items">';
+        g.items.forEach(function(item){
+          var status = (target.checklist && target.checklist[item.id]) || "";
+          var mark = status==="uygun" ? "✓" : (status==="uygunDegil" ? "✕" : "–");
+          html += '<div class="item">';
+          html += '<button class="item__status ' + status + '" data-action="cycle-status" data-job-id="' + job.id + '" data-blok="' + blokAttr(blokIndex) + '" data-item-id="' + item.id + '" aria-label="Durumu değiştir">' + mark + '</button>';
+          html += '<div class="item__body"><div class="item__text">' + escapeHtml(item.text) + '</div>';
+          if(status==="uygunDegil"){
+            var noteVal = (target.checklistNotlar && target.checklistNotlar[item.id]) || "";
+            html += '<div class="item__note"><input type="text" data-note-field="' + item.id + '" data-job-id="' + job.id + '" data-blok="' + blokAttr(blokIndex) + '" placeholder="Eksik / not..." value="' + escapeHtml(noteVal) + '"></div>';
+          }
+          html += '</div></div>';
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+    return html;
+  }
+
+  function renderChecklist(job){
+    var prog = jobProgress(job);
+    var html = '<div class="checklist">';
+    html += '<div class="checklist__head"><h4>Kalıp-Demir Kontrol Listesi</h4><span class="checklist__summary">' + prog.marked + '/' + prog.total + ' madde · ' + prog.fails + ' uygunsuz</span></div>';
+
+    if(job.bloklar && job.bloklar.length){
+      job.bloklar.forEach(function(blok, i){
+        var bp = targetProgress(blok);
+        var bKey = job.id + "|blok|" + i;
+        var bOpen = !!ui.openBlocks[bKey];
+        html += '<div class="blok">';
+        html += '<div class="blok__head" data-action="toggle-blok" data-job-id="' + job.id + '" data-blok="' + i + '">';
+        html += '<span class="blok__title">' + (bOpen?"▾ ":"▸ ") + escapeHtml(blok.ad || ("Blok " + (i+1))) + '</span>';
+        html += '<span class="blok__frac' + (bp.fails>0?' has-fail':'') + '">' + bp.marked + '/' + bp.total + (bp.fails>0?' · '+bp.fails+' uygunsuz':'') + '</span></div>';
+        if(bOpen){
+          html += '<div class="blok__body">';
+          html += '<div class="field" style="margin-bottom:10px;"><label>Blok Adı</label><input type="text" data-blok-name-field data-job-id="' + job.id + '" data-blok="' + i + '" value="' + escapeHtml(blok.ad || ("Blok " + (i+1))) + '"></div>';
+          html += renderStackAndChips(blok);
+          html += renderGroups(job, blok, i);
+          html += '</div>';
+        }
+        html += '</div>';
+      });
+    } else {
+      html += renderStackAndChips(job);
+      html += renderGroups(job, job, null);
+    }
+    html += '</div>';
+    return html;
+  }
+
+  /* ---------------- EVENTS ---------------- */
+
+  function bindTextInputs(){
+    document.querySelectorAll("[data-field]").forEach(function(el){
+      el.addEventListener("input", function(){
+        var job = getJob(el.getAttribute("data-job-id"));
+        if(!job) return;
+        job[el.getAttribute("data-field")] = el.value;
+        scheduleSave();
+      });
+    });
+    document.querySelectorAll("[data-note-field]").forEach(function(el){
+      el.addEventListener("input", function(){
+        var target = resolveTarget(el.getAttribute("data-job-id"), el.getAttribute("data-blok"));
+        if(!target) return;
+        if(!target.checklistNotlar) target.checklistNotlar = {};
+        target.checklistNotlar[el.getAttribute("data-note-field")] = el.value;
+        scheduleSave();
+      });
+    });
+    document.querySelectorAll("[data-blok-name-field]").forEach(function(el){
+      el.addEventListener("input", function(){
+        var job = getJob(el.getAttribute("data-job-id"));
+        var idx = parseInt(el.getAttribute("data-blok"),10);
+        if(job && job.bloklar && job.bloklar[idx]){
+          job.bloklar[idx].ad = el.value;
+          scheduleSave();
+        }
+      });
+    });
+    var d1 = document.getElementById("draft-isadi");
+    var d2 = document.getElementById("draft-tarih");
+    var d3 = document.getElementById("draft-ilce");
+    var d4 = document.getElementById("draft-blok");
+    if(d1) d1.addEventListener("input", function(){ ui.draft.isAdi = d1.value; });
+    if(d2) d2.addEventListener("input", function(){ ui.draft.tarih = d2.value; });
+    if(d3) d3.addEventListener("change", function(){ ui.draft.ilce = d3.value; });
+    if(d4) d4.addEventListener("input", function(){ ui.draft.blokSayisi = d4.value; });
+  }
+
+  document.addEventListener("click", function(e){
+    var el = e.target.closest("[data-action]");
+    if(!el) return;
+    var action = el.getAttribute("data-action");
+    var jobId = el.getAttribute("data-job-id");
+
+    if(action==="switch-tab"){
+      ui.tab = el.getAttribute("data-tab");
+      ui.expanded = null;
+      render();
+    } else if(action==="toggle-form"){
+      ui.showForm = !ui.showForm;
+      if(ui.showForm) ui.draft = { isAdi:"", tarih: todayStr(), ilce:"", blokSayisi:"" };
+      render();
+    } else if(action==="cancel-form"){
+      ui.showForm = false;
+      render();
+    } else if(action==="submit-form"){
+      if(!ui.draft.isAdi || !ui.draft.isAdi.trim()){
+        alert("İş adı boş olamaz.");
+        return;
+      }
+      var blokSayisi = parseInt(ui.draft.blokSayisi,10) || 0;
+      var newJob = {
+        id: genId(),
+        isAdi: ui.draft.isAdi.trim(),
+        tarih: ui.draft.tarih || todayStr(),
+        ilce: ui.draft.ilce || "",
+        durum: "bekleyen",
+        notlar: "",
+        checklist: {},
+        checklistNotlar: {}
+      };
+      if(blokSayisi >= 2){
+        newJob.bloklar = [];
+        for(var bi=0; bi<blokSayisi; bi++){
+          newJob.bloklar.push({ ad: "Blok " + (bi+1), checklist:{}, checklistNotlar:{} });
+        }
+      }
+      jobs.push(newJob);
+      ui.showForm = false;
+      ui.tab = "bekleyen";
+      saveJobsNow();
+      render();
+    } else if(action==="expand-job"){
+      ui.expanded = (ui.expanded===jobId) ? null : jobId;
+      render();
+    } else if(action==="set-durum"){
+      var job = getJob(jobId);
+      if(job){ job.durum = el.getAttribute("data-durum"); saveJobsNow(); render(); }
+    } else if(action==="delete-job"){
+      if(confirm("Bu iş silinsin mi? Bu işlem geri alınamaz.")){
+        jobs = jobs.filter(function(j){ return j.id!==jobId; });
+        ui.expanded = null;
+        saveJobsNow();
+        render();
+      }
+    } else if(action==="toggle-group"){
+      var blokAttrVal = el.getAttribute("data-blok");
+      var key = pathKey(jobId, (blokAttrVal===""?null:blokAttrVal), el.getAttribute("data-group"));
+      ui.openGroups[key] = !ui.openGroups[key];
+      render();
+    } else if(action==="toggle-blok"){
+      var bKey = jobId + "|blok|" + el.getAttribute("data-blok");
+      ui.openBlocks[bKey] = !ui.openBlocks[bKey];
+      render();
+    } else if(action==="cycle-status"){
+      var target = resolveTarget(jobId, el.getAttribute("data-blok"));
+      if(!target) return;
+      if(!target.checklist) target.checklist = {};
+      var itemId = el.getAttribute("data-item-id");
+      var cur = target.checklist[itemId];
+      var next = !cur ? "uygun" : (cur==="uygun" ? "uygunDegil" : null);
+      if(next) target.checklist[itemId] = next; else delete target.checklist[itemId];
+      saveJobsNow();
+      render();
+    } else if(action==="copy-report"){
+      copyReport(jobId);
+    } else if(action==="print-report"){
+      printReport(jobId);
+    } else if(action==="reset-data"){
+      if(confirm("Bu, ekipteki HERKESİN verilerini tamamen silecek. Bu işlem geri alınamaz. Emin misin?")){
+        jobs = [];
+        saveJobsNow();
+        render();
+      }
+    }
+  });
+
+  /* ---------------- INIT ---------------- */
+  var started = false;
+  function start(){
+    if(started) return;
+    started = true;
+    render();
+  }
+  try{
+    loadJobs().then(start).catch(function(e){ console.error(e); jobs = jobs || []; start(); });
+  }catch(e){
+    console.error(e); jobs = []; start();
+  }
+  setTimeout(start, 2500);
+})();
+</script>
+</body>
+</html>
