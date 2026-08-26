@@ -54,7 +54,7 @@
   #app{max-width:760px;margin:0 auto;padding:28px 18px 80px;}
 
   /* ---- Title block ---- */
-  .titleblock{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border:1.5px solid var(--paper-dim);border-radius:var(--radius);overflow:hidden;margin-bottom:22px;background:rgba(255,255,255,0.02);}
+  .titleblock{display:flex;flex-wrap:wrap;align-items:stretch;gap:0;border:1.5px solid var(--paper-dim);border-radius:var(--radius);overflow:hidden;margin-bottom:18px;background:rgba(255,255,255,0.02);}
   .titleblock__main{flex:1 1 240px;padding:14px 18px;border-right:1.5px solid var(--paper-dim);}
   .titleblock__main h1{font-family:var(--font-d);font-size:1.35rem;letter-spacing:0.02em;margin:0 0 4px;font-weight:700;}
   .titleblock__main p{margin:0;font-size:0.8rem;color:var(--paper-dim);font-family:var(--font-m);}
@@ -91,8 +91,8 @@
   .field input:focus-visible, .field textarea:focus-visible, .field select:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
   .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:6px;}
 
-  /* ---- Tabs ---- */
-  .tabs{display:flex;gap:4px;border-bottom:1.5px solid var(--grid-line);margin-bottom:16px;}
+  /* ---- Tabs (hem üst bölüm sekmeleri hem durum sekmeleri için ortak) ---- */
+  .tabs{display:flex;gap:4px;border-bottom:1.5px solid var(--grid-line);margin-bottom:16px;flex-wrap:wrap;}
   .tab{
     background:none;border:none;color:var(--paper-dim);font-size:0.85rem;font-weight:600;
     padding:10px 4px;margin-right:18px;cursor:pointer;border-bottom:2.5px solid transparent;
@@ -112,7 +112,17 @@
   /* ---- Empty state ---- */
   .empty{padding:34px 12px;text-align:center;color:var(--paper-dim);border:1.5px dashed var(--grid-line);border-radius:var(--radius);font-size:0.9rem;}
 
-  /* ---- Job card ---- */
+  /* ---- Stats grid (günlük bölümler) ---- */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px;}
+  .stat-card{background:var(--paper);border-radius:var(--radius);padding:14px;text-align:center;}
+  .stat-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);font-weight:600;}
+  .stat-value{font-size:1.6rem;font-weight:700;font-family:var(--font-d);margin-top:4px;color:var(--ink);}
+
+  /* ---- Gün ayırıcı ---- */
+  .day-divider{display:flex;align-items:center;gap:10px;margin:18px 0 8px;color:var(--paper-dim);font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+  .day-divider::before,.day-divider::after{content:'';flex:1;height:1px;background:var(--grid-line);}
+
+  /* ---- Job card (Genel + günlük ortak kart iskeleti) ---- */
   .job{background:var(--paper);color:var(--ink);border-radius:var(--radius);margin-bottom:12px;box-shadow:0 3px 10px rgba(0,0,0,0.22);overflow:hidden;border-left:5px solid var(--grid-line);}
   .job.durum-bekleyen{border-left-color:#7C93A6;}
   .job.durum-tamamlandi{border-left-color:var(--ok);}
@@ -136,6 +146,7 @@
   .job__fails-note{margin-top:3px;color:var(--fail);font-style:italic;font-size:0.8rem;}
   .job__fails-note--empty{opacity:0.65;}
   .job__notes-preview{margin-top:6px;font-size:0.82rem;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .job__kat-summary{margin-top:6px;font-family:var(--font-m);font-size:0.76rem;color:var(--ink-soft);background:var(--paper-dim);display:inline-block;padding:3px 9px;border-radius:10px;}
   .job__chevron{font-family:var(--font-m);color:var(--ink-soft);font-size:0.9rem;padding-top:2px;}
 
   /* ---- Expanded body ---- */
@@ -149,9 +160,9 @@
   .job__footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:10px;}
   .job__report-actions{display:flex;gap:8px;flex-wrap:wrap;}
 
-  /* ---- Checklist ---- */
+  /* ---- Checklist (Genel) ---- */
   .checklist{margin-top:16px;border-top:1px dashed #C7CBBC;padding-top:14px;}
-  .checklist__head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:4px;}
+  .checklist__head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
   .checklist__head h4{margin:0;font-family:var(--font-d);font-size:0.92rem;}
   .checklist__summary{font-family:var(--font-m);font-size:0.76rem;color:var(--ink-soft);}
 
@@ -188,7 +199,7 @@
   .item__note{margin-top:6px;}
   .item__note input{width:100%;font-size:0.8rem;padding:6px 8px;border:1px solid var(--fail-soft);border-radius:4px;background:#FFF9F6;}
 
-  /* ---- Blok (multi-block) ---- */
+  /* ---- Blok (multi-block, Genel) ---- */
   .blok{border:1px solid var(--accent-soft);border-radius:6px;margin-bottom:10px;overflow:hidden;background:#fff;}
   .blok__head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;cursor:pointer;background:#FDF4E9;}
   .blok__head:hover{background:#FCEBD4;}
@@ -196,6 +207,13 @@
   .blok__frac{font-family:var(--font-m);font-size:0.74rem;color:var(--ink-soft);}
   .blok__frac.has-fail{color:var(--fail);font-weight:600;}
   .blok__body{padding:12px;}
+
+  /* ---- Günlük bölümlerin kontrol satırları ---- */
+  .g-quick-check{flex:none;width:26px;height:26px;border-radius:6px;border:2px solid #C7CBBC;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff;margin-top:1px;}
+  .g-quick-check.done{background:var(--ok);border-color:var(--ok);}
+  .g-quick-check.problem{background:var(--fail);border-color:var(--fail);}
+  .g-quick-check:hover{border-color:var(--ok);}
+  .g-quick-check:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
 
   footer{text-align:center;margin-top:26px;}
   .loading{padding:60px 0;text-align:center;color:var(--paper-dim);font-family:var(--font-m);}
@@ -230,6 +248,8 @@
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 <div id="app"><div class="loading">Yükleniyor…</div></div>
@@ -241,8 +261,6 @@
 
   var STORAGE_KEY = "santiye-kontrol-jobs-v1";
 
-  // Firebase config - kullanıcı gerçek bilgileri verince buraya yapıştırılacak.
-  // apiKey "BURAYA" içerdiği sürece Firebase devre dışı kalır, uygulama eskisi gibi çalışır.
   var FIREBASE_CONFIG = {
     apiKey: "AIzaSyB6ea9qtfpsJGZpSu4LsaC9RZWTjzEouYc",
     authDomain: "santiye-kontrol-53c1c.firebaseapp.com",
@@ -324,7 +342,6 @@
   var STRUCTURAL_GROUPS = CHECKLIST_GROUPS.filter(function(g){ return g.structural; });
   var EXTRA_GROUPS = CHECKLIST_GROUPS.filter(function(g){ return !g.structural; });
 
-  // Kullanıcının istediği öncelik sırası: Şahinbey, Şehitkamil, Oğuzeli, Nizip, Araban önce; kalanlar sonra.
   var GAZIANTEP_ILCELER = ["Şahinbey","Şehitkamil","Oğuzeli","Nizip","Araban","İslahiye","Karkamış","Nurdağı","Yavuzeli"];
   function ilceOptionsHtml(selected){
     var html = '<option value="">İlçe seçin</option>';
@@ -334,9 +351,75 @@
     return html;
   }
 
+  var UST_YAPI_SECENEKLERI = ["Yok","Asansör Kulesi","Enerji Katı","Asansör Kulesi + Enerji Katı"];
+  function ustYapiOptionsHtml(selected){
+    var html = "";
+    UST_YAPI_SECENEKLERI.forEach(function(o){
+      html += '<option' + ((selected||"Yok")===o ? ' selected' : '') + '>' + o + '</option>';
+    });
+    return html;
+  }
+  var BETON_SINIFI_SECENEKLERI = ["C25","C30","C35","Prefabrik","Diğer"];
+  function betonSinifiOptionsHtml(selected){
+    var html = '<option value="">Seçin</option>';
+    BETON_SINIFI_SECENEKLERI.forEach(function(o){
+      html += '<option' + (selected===o ? ' selected' : '') + '>' + o + '</option>';
+    });
+    return html;
+  }
+  function katDurumuSummary(job){
+    var hasInfo = job.bodrumSayisi || job.normalKatSayisi || job.subasman || (job.ustYapi && job.ustYapi!=="Yok");
+    if(!hasInfo) return "";
+    var parts = [];
+    if(job.bodrumSayisi) parts.push(job.bodrumSayisi + " Bodrum");
+    parts.push("Zemin");
+    if(job.normalKatSayisi) parts.push(job.normalKatSayisi + " Normal Kat");
+    if(job.subasman) parts.push("Subasman");
+    if(job.ustYapi && job.ustYapi!=="Yok") parts.push(job.ustYapi);
+    return parts.join(" + ");
+  }
+
+  /* ---------------- GÜNLÜK BÖLÜM AYARLARI (İş Takibi + Beton Takibi) ---------------- */
+  var GUNLUK_CONFIG = {
+    "gunluk-is": {
+      title: "Günlük İş Takibi",
+      entryNoun: "İş",
+      sahaLabel: "Şantiye / Alan Adı",
+      sahaPlaceholder: "A Blok, B Blok Kazı vs.",
+      firebasePath: "gunluk_isler",
+      localKey: "gunluk-is-v1",
+      extraFields: [
+        { key:"aciklama", label:"Açıklama", type:"text", placeholder:"Döşeme, kalıp kurulumu vs. (opsiyonel)" }
+      ]
+    },
+    "gunluk-beton": {
+      title: "Günlük Beton Takibi",
+      entryNoun: "Döküm",
+      sahaLabel: "Blok Adı",
+      sahaPlaceholder: "A Blok, B Blok vs.",
+      firebasePath: "gunluk_beton",
+      localKey: "gunluk-beton-v1",
+      extraFields: [
+        { key:"eleman", label:"Döküm Elemanı", type:"select", options:["Temel","Perde","Kolon, Kiriş, Döşeme","Kiriş, Döşeme","Kolon, Perde","Diğer"] },
+        { key:"sinif", label:"Beton Sınıfı", type:"select", options:["C25/30","C30/37","C35/45","Diğer"] },
+        { key:"miktar", label:"Miktar (m³)", type:"number", placeholder:"örn. 45" }
+      ]
+    }
+  };
+  var gData = { "gunluk-is": [], "gunluk-beton": [] };
+  var gFbRefs = {};
+  var gSaveTimer = {};
+
   var jobs = [];
-  var ui = { tab:"bekleyen", expanded:null, openGroups:{}, openBlocks:{}, showForm:false,
-    draft:{ isAdi:"", tarih: todayStr(), ilce:"", blokSayisi:"" } };
+  var ui = {
+    appTab: "genel",
+    tab:"bekleyen", expanded:null, openGroups:{}, openBlocks:{}, showForm:false,
+    draft:{ isAdi:"", tarih: todayStr(), ilce:"", blokSayisi:"", bodrumSayisi:"", normalKatSayisi:"", subasman:false, ustYapi:"Yok", betonSinifi:"" },
+    gTab: { "gunluk-is":"bekleyen", "gunluk-beton":"bekleyen" },
+    gExpanded: { "gunluk-is":null, "gunluk-beton":null },
+    gShowForm: { "gunluk-is":false, "gunluk-beton":false },
+    gDraft: { "gunluk-is":{}, "gunluk-beton":{} }
+  };
   var saveTimer = null;
 
   function todayStr(){ return new Date().toISOString().slice(0,10); }
@@ -353,6 +436,11 @@
     return p[2] + "." + p[1] + "." + p[0];
   }
   function durumLabel(d){ return d==="bekleyen" ? "Bekleyen" : (d==="tamamlandi" ? "Tamamlandı" : "Sorun"); }
+  function trToAscii(s){
+    if(s==null) return "";
+    var map = {"ş":"s","Ş":"S","ğ":"g","Ğ":"G","ı":"i","İ":"I","ö":"o","Ö":"O","ü":"u","Ü":"U","ç":"c","Ç":"C"};
+    return String(s).replace(/[şŞğĞıİöÖüÜçÇ]/g, function(ch){ return map[ch]; });
+  }
 
   function hasWS(){
     try{ return !!(window.storage && typeof window.storage.get === "function"); }
@@ -408,7 +496,7 @@
             resolve();
             return;
           }
-          if(isTypingNow()) return; // aktif düzenlemeyi bozma, bir sonraki render'da yansır
+          if(isTypingNow()) return;
           jobs = newJobs;
           render();
         }, function(err){
@@ -442,11 +530,6 @@
   }
 
   function getJob(id){ return jobs.find(function(j){ return j.id===id; }); }
-
-  /* ---- Blok / hedef (target) soyutlaması ----
-     "target" checklist+checklistNotlar taşıyan herhangi bir nesne: ya işin kendisi
-     (bloksuz basit iş) ya da bir blok kaydı (job.bloklar[i]). Böylece checklist
-     mantığı tek kod yolundan hem basit işler hem çoklu blok işleri için çalışır. */
 
   function jobBlocks(job){
     if(job.bloklar && job.bloklar.length){
@@ -552,7 +635,84 @@
     };
   }
 
-  /* ---------------- REPORT (kopyala / yazdır) ---------------- */
+  /* ---------------- GÜNLÜK VERİ: FIREBASE / STORAGE ---------------- */
+
+  function gLoadLocal(key){
+    try{ var raw = localStorage.getItem(GUNLUK_CONFIG[key].localKey); gData[key] = raw?JSON.parse(raw):[]; }
+    catch(e){ gData[key] = []; }
+  }
+  function gSaveLocal(key){
+    try{ localStorage.setItem(GUNLUK_CONFIG[key].localKey, JSON.stringify(gData[key])); }
+    catch(e){ console.error("Yerel kayıt hatası:", e); }
+  }
+  function gToFirebaseObj(key){
+    var obj = {};
+    gData[key].forEach(function(e){ obj[e.id] = e; });
+    return obj;
+  }
+  function gLoadSection(key){
+    var cfg = GUNLUK_CONFIG[key];
+    return new Promise(function(resolve){
+      if(firebaseConfigured() && typeof firebase !== "undefined"){
+        try{
+          if(!firebase.apps || !firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+          var ref = firebase.database().ref(cfg.firebasePath);
+          gFbRefs[key] = ref;
+          var first = true;
+          ref.on("value", function(snap){
+            var list = firebaseObjToJobs(snap.val());
+            if(first){ gData[key] = list; first = false; resolve(); return; }
+            if(isTypingNow()) return;
+            gData[key] = list;
+            render();
+          }, function(err){
+            console.error("Firebase okuma hatası ("+key+"):", err);
+            if(first){ gLoadLocal(key); first = false; resolve(); }
+          });
+          return;
+        }catch(e){ console.error(e); }
+      }
+      if(hasWS()){
+        window.storage.get(cfg.localKey, true).then(function(res){
+          gData[key] = (res && res.value) ? JSON.parse(res.value) : [];
+          resolve();
+        }).catch(function(){ gLoadLocal(key); resolve(); });
+      } else {
+        gLoadLocal(key);
+        resolve();
+      }
+    });
+  }
+  function gSaveNow(key){
+    if(gFbRefs[key]){
+      try{ gFbRefs[key].set(gToFirebaseObj(key)); }catch(e){ console.error("Firebase yazma hatası:", e); }
+    }
+    if(hasWS()){
+      try{ window.storage.set(GUNLUK_CONFIG[key].localKey, JSON.stringify(gData[key]), true).catch(function(){}); }catch(e){}
+    }
+    gSaveLocal(key);
+  }
+  function gScheduleSave(key){
+    clearTimeout(gSaveTimer[key]);
+    gSaveTimer[key] = setTimeout(function(){ gSaveNow(key); }, 500);
+  }
+
+  function gGetEntry(key, id){ return (gData[key]||[]).find(function(e){ return e.id===id; }); }
+  function gSortedEntries(key, durum){
+    var list = (gData[key]||[]).filter(function(e){ return (e.durum||"bekleyen")===durum; });
+    list.sort(function(a,b){
+      return durum==="tamamlandi" ? (b.tarih||"").localeCompare(a.tarih||"") : (a.tarih||"").localeCompare(b.tarih||"");
+    });
+    return list;
+  }
+  function gCounts(key){
+    var list = gData[key]||[];
+    var tamamlandi=0, sorun=0;
+    list.forEach(function(e){ var d=e.durum||"bekleyen"; if(d==="tamamlandi") tamamlandi++; else if(d==="sorun") sorun++; });
+    return { bekleyen: list.length - tamamlandi - sorun, tamamlandi: tamamlandi, sorun: sorun, toplam: list.length };
+  }
+
+  /* ---------------- REPORT (Genel: kopyala / yazdır / pdf) ---------------- */
 
   function buildReportText(job){
     var prog = jobProgress(job);
@@ -564,6 +724,8 @@
     lines.push("Tarih: " + formatTr(job.tarih));
     lines.push("Durum: " + durumLabel(job.durum));
     if(job.bloklar && job.bloklar.length) lines.push("Blok Sayısı: " + job.bloklar.length);
+    if(katDurumuSummary(job)) lines.push("Kat Durumu: " + katDurumuSummary(job));
+    if(job.betonSinifi) lines.push("Beton Sınıfı: " + job.betonSinifi);
     lines.push("");
     lines.push("İlerleme: " + prog.marked + "/" + prog.total + " madde değerlendirildi, " + prog.fails + " uygunsuz");
     if(fails.length){
@@ -589,6 +751,8 @@
     html += '<tr><td>Tarih</td><td>' + formatTr(job.tarih) + '</td></tr>';
     html += '<tr><td>Durum</td><td>' + durumLabel(job.durum) + '</td></tr>';
     if(job.bloklar && job.bloklar.length) html += '<tr><td>Blok Sayısı</td><td>' + job.bloklar.length + '</td></tr>';
+    if(katDurumuSummary(job)) html += '<tr><td>Kat Durumu</td><td>' + escapeHtml(katDurumuSummary(job)) + '</td></tr>';
+    if(job.betonSinifi) html += '<tr><td>Beton Sınıfı</td><td>' + escapeHtml(job.betonSinifi) + '</td></tr>';
     html += '</table>';
     html += '<p class="print-progress">' + prog.marked + '/' + prog.total + ' madde değerlendirildi · ' + prog.fails + ' uygunsuz</p>';
     if(fails.length){
@@ -642,29 +806,148 @@
     window.print();
   }
 
+  function pdfAvailable(){
+    if(typeof window.jspdf === "undefined"){
+      alert('PDF oluşturucu yüklenemedi (internet bağlantısı gerekiyor). Bu arada "Yazdır" ile de PDF olarak kaydedebilirsin.');
+      return false;
+    }
+    return true;
+  }
+  function safeFilename(s){
+    return trToAscii(s||"rapor").replace(/[^a-z0-9 ]/gi,"_").slice(0,60);
+  }
+  function downloadGenelPdf(jobId){
+    if(!pdfAvailable()) return;
+    var job = getJob(jobId); if(!job) return;
+    var jsPDFCtor = window.jspdf.jsPDF;
+    var doc = new jsPDFCtor();
+    var prog = jobProgress(job);
+    var fails = failedItems(job);
+    var y = 16;
+    doc.setFontSize(15); doc.text("SANTIYE KONTROL RAPORU", 14, y); y += 8;
+    doc.setFontSize(10);
+    doc.text("Is: " + trToAscii(job.isAdi||""), 14, y); y += 6;
+    if(job.ilce){ doc.text("Ilce: " + trToAscii(job.ilce), 14, y); y += 6; }
+    doc.text("Tarih: " + formatTr(job.tarih), 14, y); y += 6;
+    doc.text("Durum: " + trToAscii(durumLabel(job.durum)), 14, y); y += 6;
+    if(katDurumuSummary(job)){ doc.text("Kat Durumu: " + trToAscii(katDurumuSummary(job)), 14, y); y += 6; }
+    if(job.betonSinifi){ doc.text("Beton Sinifi: " + trToAscii(job.betonSinifi), 14, y); y += 6; }
+    doc.text("Ilerleme: " + prog.marked + "/" + prog.total + " madde, " + prog.fails + " uygunsuz", 14, y); y += 8;
+    if(fails.length){
+      doc.setFontSize(12); doc.text("Uygunsuz Maddeler", 14, y); y += 4;
+      doc.autoTable({ startY:y, head:[["Grup / Madde","Not"]], body: fails.map(function(f){ return [trToAscii(f.groupLabel+": "+f.text), trToAscii(f.note||"-")]; }), styles:{fontSize:8} });
+      y = doc.lastAutoTable.finalY + 8;
+    }
+    jobBlocks(job).forEach(function(b){
+      if(y > 250){ doc.addPage(); y = 16; }
+      if(b.label){ doc.setFontSize(12); doc.text(trToAscii(b.label), 14, y); y += 6; }
+      var rows = [];
+      CHECKLIST_GROUPS.forEach(function(g){
+        g.items.forEach(function(it){
+          var st = (b.target.checklist && b.target.checklist[it.id]) || "-";
+          var lbl = st==="uygun" ? "Uygun" : (st==="uygunDegil" ? "Uygun Degil" : "Degerlendirilmedi");
+          rows.push([trToAscii(g.label), trToAscii(it.text), lbl]);
+        });
+      });
+      doc.autoTable({ startY:y, head:[["Grup","Madde","Durum"]], body: rows, styles:{fontSize:7} });
+      y = doc.lastAutoTable.finalY + 10;
+    });
+    doc.save(safeFilename(job.isAdi) + ".pdf");
+  }
+
+  /* ---------------- GÜNLÜK RAPOR (kopyala / yazdır / pdf) ---------------- */
+
+  function gBuildReportText(key, entry){
+    var cfg = GUNLUK_CONFIG[key];
+    var lines = [];
+    lines.push(cfg.title.toUpperCase() + " RAPORU");
+    lines.push(cfg.sahaLabel + ": " + (entry.saha||""));
+    lines.push("Tarih: " + formatTr(entry.tarih));
+    lines.push("Durum: " + durumLabel(entry.durum||"bekleyen"));
+    cfg.extraFields.forEach(function(f){
+      var v = entry[f.key];
+      if(f.type==="checkbox") v = v ? "Evet" : "Hayır";
+      if(v!=null && v!=="") lines.push(f.label + ": " + v);
+    });
+    lines.push("");
+    if(entry.notlar) lines.push("Notlar: " + entry.notlar);
+    lines.push("");
+    lines.push("Rapor tarihi: " + formatTr(todayStr()));
+    return lines.join("\n");
+  }
+  function gBuildReportHtml(key, entry){
+    var cfg = GUNLUK_CONFIG[key];
+    var html = '<div class="print-header"><h1>' + cfg.title.toUpperCase() + ' RAPORU</h1><div class="print-date">Rapor tarihi: ' + formatTr(todayStr()) + '</div></div>';
+    html += '<table class="print-info"><tr><td>'+escapeHtml(cfg.sahaLabel)+'</td><td>'+escapeHtml(entry.saha||"")+'</td></tr>';
+    html += '<tr><td>Tarih</td><td>'+formatTr(entry.tarih)+'</td></tr>';
+    html += '<tr><td>Durum</td><td>'+durumLabel(entry.durum||"bekleyen")+'</td></tr>';
+    cfg.extraFields.forEach(function(f){
+      var v = entry[f.key];
+      if(f.type==="checkbox") v = v ? "Evet" : "Hayır";
+      if(v!=null && v!=="") html += '<tr><td>'+escapeHtml(f.label)+'</td><td>'+escapeHtml(String(v))+'</td></tr>';
+    });
+    html += '</table>';
+    if(entry.notlar) html += '<h2>Notlar</h2><p>'+escapeHtml(entry.notlar).replace(/\n/g,'<br>')+'</p>';
+    html += '<div class="print-sign">Kontrol Eden: ______________________ &nbsp;&nbsp;&nbsp; İmza: ______________________</div>';
+    return html;
+  }
+  function gCopyReport(key, id){
+    var entry = gGetEntry(key, id); if(!entry) return;
+    copyToClipboard(gBuildReportText(key, entry));
+  }
+  function gPrintReport(key, id){
+    var entry = gGetEntry(key, id); if(!entry) return;
+    document.getElementById("print-report").innerHTML = gBuildReportHtml(key, entry);
+    window.print();
+  }
+  function gDownloadPdf(key, id){
+    if(!pdfAvailable()) return;
+    var entry = gGetEntry(key, id); if(!entry) return;
+    var cfg = GUNLUK_CONFIG[key];
+    var jsPDFCtor = window.jspdf.jsPDF;
+    var doc = new jsPDFCtor();
+    var y = 16;
+    doc.setFontSize(15); doc.text(trToAscii(cfg.title).toUpperCase() + " RAPORU", 14, y); y += 8;
+    doc.setFontSize(10);
+    doc.text(trToAscii(cfg.sahaLabel) + ": " + trToAscii(entry.saha||""), 14, y); y += 6;
+    doc.text("Tarih: " + formatTr(entry.tarih), 14, y); y += 6;
+    doc.text("Durum: " + trToAscii(durumLabel(entry.durum||"bekleyen")), 14, y); y += 6;
+    cfg.extraFields.forEach(function(f){
+      var v = entry[f.key];
+      if(f.type==="checkbox") v = v ? "Evet" : "Hayir";
+      if(v!=null && v!=="") { doc.text(trToAscii(f.label) + ": " + trToAscii(String(v)), 14, y); y += 6; }
+    });
+    y += 4;
+    if(entry.notlar){ doc.setFontSize(10); doc.text("Notlar: " + trToAscii(entry.notlar), 14, y); }
+    doc.save(safeFilename(entry.saha) + ".pdf");
+  }
+
   /* ---------------- RENDER ---------------- */
 
   function render(){
     var app = document.getElementById("app");
-    var c = counts();
     var html = "";
 
-    html += renderTitleblock(c);
-    html += renderNewJobBar();
-    if(ui.showForm) html += renderNewJobForm();
-    html += renderTabs(c);
+    html += renderTitleblock();
+    html += renderAppTabs();
 
-    var groups = groupedByIlce(ui.tab);
-    if(groups.length===0){
-      html += '<div class="empty">' + emptyMessage(ui.tab) + '</div>';
+    if(ui.appTab === "genel"){
+      var c = counts();
+      html += renderNewJobBar();
+      if(ui.showForm) html += renderNewJobForm();
+      html += renderTabs(c);
+      var groups = groupedByIlce(ui.tab);
+      if(groups.length===0){
+        html += '<div class="empty">' + emptyMessage(ui.tab) + '</div>';
+      } else {
+        groups.forEach(function(grp){
+          html += '<div class="ilce-header"><span class="ilce-header__name">' + escapeHtml(grp.label) + '</span><span class="ilce-header__count">' + grp.jobs.length + ' iş</span></div>';
+          grp.jobs.forEach(function(job){ html += renderJobCard(job); });
+        });
+      }
     } else {
-      groups.forEach(function(grp){
-        html += '<div class="ilce-header"><span class="ilce-header__name">' + escapeHtml(grp.label) + '</span><span class="ilce-header__count">' + grp.jobs.length + ' iş</span></div>';
-        grp.jobs.forEach(function(job){ html += renderJobCard(job); });
-      });
+      html += renderGunlukSection(ui.appTab);
     }
-
-    html += '<footer><button class="btn-text" data-action="reset-data">Verileri sıfırla</button></footer>';
 
     app.innerHTML = html;
     bindTextInputs();
@@ -676,15 +959,25 @@
     return "Sorunlu işaretlenmiş iş yok.";
   }
 
-  function renderTitleblock(c){
+  function renderTitleblock(){
     var d = new Date();
     var trDate = d.getDate() + "." + (d.getMonth()+1) + "." + d.getFullYear();
     return '' +
     '<div class="titleblock">' +
       '<div class="titleblock__main"><h1>ŞANTİYE KONTROL SİSTEMİ</h1><p>saha kontrol takip formu</p></div>' +
       '<div class="titleblock__cell"><span>Tarih</span><strong>' + trDate + '</strong></div>' +
-      '<div class="titleblock__cell"><span>Bekleyen</span><strong>' + c.bekleyen + '</strong></div>' +
     '</div>';
+  }
+
+  function renderAppTabs(){
+    function b(key, label){
+      return '<button class="tab' + (ui.appTab===key?' active':'') + '" data-action="switch-app-tab" data-apptab="' + key + '">' + label + '</button>';
+    }
+    return '<div class="tabs">' +
+      b("genel","Genel İş Listesi") +
+      b("gunluk-is","Günlük İş Takibi") +
+      b("gunluk-beton","Günlük Beton Takibi") +
+      '</div>';
   }
 
   function renderNewJobBar(){
@@ -703,6 +996,17 @@
       '<div class="field-row">' +
         '<div class="field"><label>İlçe</label><select id="draft-ilce">' + ilceOptionsHtml(ui.draft.ilce) + '</select></div>' +
         '<div class="field"><label>Blok Sayısı</label><input type="number" min="0" id="draft-blok" placeholder="opsiyonel, çoklu blok" value="' + escapeHtml(ui.draft.blokSayisi) + '"></div>' +
+      '</div>' +
+      '<div class="field-row">' +
+        '<div class="field"><label>Bodrum Kat Sayısı</label><input type="number" min="0" id="draft-bodrum" placeholder="0" value="' + escapeHtml(ui.draft.bodrumSayisi) + '"></div>' +
+        '<div class="field"><label>Normal Kat Sayısı</label><input type="number" min="0" id="draft-normalkat" placeholder="0" value="' + escapeHtml(ui.draft.normalKatSayisi) + '"></div>' +
+      '</div>' +
+      '<div class="field-row">' +
+        '<div class="field"><label style="display:flex;align-items:center;gap:8px;padding-top:6px;"><input type="checkbox" id="draft-subasman"' + (ui.draft.subasman?' checked':'') + ' style="width:18px;height:18px;"> Subasman Var</label></div>' +
+        '<div class="field"><label>Üst Yapı</label><select id="draft-ustyapi">' + ustYapiOptionsHtml(ui.draft.ustYapi) + '</select></div>' +
+      '</div>' +
+      '<div class="field-row">' +
+        '<div class="field"><label>Beton Sınıfı</label><select id="draft-betonsinifi">' + betonSinifiOptionsHtml(ui.draft.betonSinifi) + '</select></div>' +
       '</div>' +
       '<div class="form-actions">' +
         '<button class="btn btn-ghost" data-action="cancel-form">İptal</button>' +
@@ -734,10 +1038,13 @@
     html += '<div class="job__title-row"><span class="job__title">' + escapeHtml(job.isAdi || "(isimsiz iş)") + '</span>';
     if(job.ilce) html += '<span class="job__ilce">' + escapeHtml(job.ilce) + '</span>';
     if(job.bloklar && job.bloklar.length) html += '<span class="job__ilce">' + job.bloklar.length + ' blok</span>';
+    if(job.betonSinifi) html += '<span class="job__ilce">' + escapeHtml(job.betonSinifi) + '</span>';
     html += '</div>';
     html += '<div class="job__meta"><span>' + formatTr(job.tarih) + '</span>';
     if(prog.marked>0) html += '<span class="badge-progress' + (prog.fails>0?' has-fail':'') + '">' + prog.marked + '/' + prog.total + (prog.fails>0 ? ' · ' + prog.fails + ' uygunsuz' : '') + '</span>';
     html += '</div>';
+    var katSummary = katDurumuSummary(job);
+    if(katSummary) html += '<div class="job__kat-summary">' + escapeHtml(katSummary) + '</div>';
     if(fails.length){
       html += '<div class="job__fails"><div class="job__fails-title">Uygunsuz (' + fails.length + ')</div><ul>';
       fails.forEach(function(f){
@@ -768,6 +1075,18 @@
     html += '<div class="field"><label>İlçe</label><select data-field="ilce" data-job-id="' + job.id + '">' + ilceOptionsHtml(job.ilce||"") + '</select></div>';
     html += '</div>';
 
+    html += '<div class="field-row">';
+    html += '<div class="field"><label>Bodrum Kat Sayısı</label><input type="number" min="0" data-field="bodrumSayisi" data-job-id="' + job.id + '" value="' + escapeHtml(job.bodrumSayisi||"") + '"></div>';
+    html += '<div class="field"><label>Normal Kat Sayısı</label><input type="number" min="0" data-field="normalKatSayisi" data-job-id="' + job.id + '" value="' + escapeHtml(job.normalKatSayisi||"") + '"></div>';
+    html += '</div>';
+    html += '<div class="field-row">';
+    html += '<div class="field"><label style="display:flex;align-items:center;gap:8px;padding-top:6px;"><input type="checkbox" data-field="subasman" data-job-id="' + job.id + '"' + (job.subasman?' checked':'') + ' style="width:18px;height:18px;"> Subasman Var</label></div>';
+    html += '<div class="field"><label>Üst Yapı</label><select data-field="ustYapi" data-job-id="' + job.id + '">' + ustYapiOptionsHtml(job.ustYapi||"Yok") + '</select></div>';
+    html += '</div>';
+    html += '<div class="field-row">';
+    html += '<div class="field"><label>Beton Sınıfı</label><select data-field="betonSinifi" data-job-id="' + job.id + '">' + betonSinifiOptionsHtml(job.betonSinifi||"") + '</select></div>';
+    html += '</div>';
+
     html += '<div class="durum-switch">';
     [["bekleyen","Bekleyen"],["tamamlandi","Tamamlandı"],["sorun","Sorun"]].forEach(function(d){
       html += '<button class="durum-btn' + (job.durum===d[0]?' active':'') + '" data-action="set-durum" data-job-id="' + job.id + '" data-durum="' + d[0] + '">' + d[1] + '</button>';
@@ -781,7 +1100,8 @@
     html += '<div class="job__footer">';
     html += '<div class="job__report-actions">';
     html += '<button class="btn-card" data-action="copy-report" data-job-id="' + job.id + '">Metni Kopyala</button>';
-    html += '<button class="btn-card" data-action="print-report" data-job-id="' + job.id + '">Yazdır / PDF</button>';
+    html += '<button class="btn-card" data-action="print-report" data-job-id="' + job.id + '">Yazdır</button>';
+    html += '<button class="btn-card" data-action="pdf-report" data-job-id="' + job.id + '">PDF İndir</button>';
     html += '</div>';
     html += '<button class="btn-danger-text" data-action="delete-job" data-job-id="' + job.id + '">İşi Sil</button>';
     html += '</div>';
@@ -869,14 +1189,207 @@
     return html;
   }
 
+  /* ---------------- GÜNLÜK BÖLÜM RENDER ---------------- */
+
+  function statCard(label, value, color){
+    return '<div class="stat-card"><div class="stat-label">'+escapeHtml(label)+'</div><div class="stat-value" style="color:'+color+'">'+value+'</div></div>';
+  }
+
+  function renderGunlukSection(key){
+    var cfg = GUNLUK_CONFIG[key];
+    var c = gCounts(key);
+    var html = "";
+
+    html += '<div class="newjob-bar"><button class="btn btn-accent" data-action="g-toggle-form" data-section="'+key+'">' + (ui.gShowForm[key] ? "Vazgeç" : "+ Yeni " + cfg.entryNoun) + '</button></div>';
+    if(ui.gShowForm[key]) html += renderGunlukForm(key);
+
+    html += '<div class="stats-grid">';
+    html += statCard("Bekleyen", c.bekleyen, "var(--accent)");
+    html += statCard("Tamamlandı", c.tamamlandi, "var(--ok)");
+    html += statCard("Sorun", c.sorun, "var(--fail)");
+    html += statCard("Toplam", c.toplam, "var(--ink)");
+    html += '</div>';
+
+    html += '<div class="tabs">';
+    html += '<button class="tab' + (ui.gTab[key]==="bekleyen"?' active':'') + '" data-action="g-switch-tab" data-section="'+key+'" data-tab="bekleyen">Bekleyen<span class="count">'+c.bekleyen+'</span></button>';
+    html += '<button class="tab' + (ui.gTab[key]==="tamamlandi"?' active':'') + '" data-action="g-switch-tab" data-section="'+key+'" data-tab="tamamlandi">Tamamlanan<span class="count">'+c.tamamlandi+'</span></button>';
+    html += '<button class="tab' + (ui.gTab[key]==="sorun"?' active':'') + '" data-action="g-switch-tab" data-section="'+key+'" data-tab="sorun">Sorun<span class="count">'+c.sorun+'</span></button>';
+    html += '</div>';
+
+    var list = gSortedEntries(key, ui.gTab[key]);
+    if(list.length===0){
+      html += '<div class="empty">' + emptyGunlukMessage(ui.gTab[key]) + '</div>';
+    } else {
+      html += renderGunlukGrouped(key, list);
+    }
+    return html;
+  }
+
+  function emptyGunlukMessage(tab){
+    if(tab==="tamamlandi") return "Henüz tamamlanan yok.";
+    if(tab==="sorun") return "Sorunlu işaretlenmiş kayıt yok.";
+    return "Bekleyen yok.";
+  }
+
+  function renderGunlukGrouped(key, list){
+    var today = todayStr();
+    var todayList = list.filter(function(e){ return e.tarih===today; });
+    var otherList = list.filter(function(e){ return e.tarih!==today; });
+    var html = "";
+    if(todayList.length){
+      html += '<div class="day-divider">Bugün</div>';
+      todayList.forEach(function(e){ html += renderGunlukCard(key, e); });
+    }
+    if(otherList.length){
+      html += '<div class="day-divider">Diğer Günler</div>';
+      otherList.forEach(function(e){ html += renderGunlukCard(key, e); });
+    }
+    return html;
+  }
+
+  function gQuickIcon(durum){
+    if(durum==="tamamlandi") return "✓";
+    if(durum==="sorun") return "!";
+    return "";
+  }
+  function gQuickClass(durum){
+    if(durum==="tamamlandi") return "done";
+    if(durum==="sorun") return "problem";
+    return "";
+  }
+
+  function renderGunlukCard(key, entry){
+    var cfg = GUNLUK_CONFIG[key];
+    var expanded = ui.gExpanded[key] === entry.id;
+    var durum = entry.durum || "bekleyen";
+
+    var html = '<div class="job durum-'+durum+'">';
+    html += '<div class="job__head" data-action="g-expand" data-section="'+key+'" data-id="'+entry.id+'">';
+    html += '<button class="g-quick-check '+gQuickClass(durum)+'" data-action="g-quick-toggle" data-section="'+key+'" data-id="'+entry.id+'" aria-label="Durumu değiştir" title="Tıkla: Tamamlandı / Sorun / Bekleyen arasında değiştir">'+gQuickIcon(durum)+'</button>';
+    html += '<div class="job__main">';
+    html += '<div class="job__title-row"><span class="job__title">'+escapeHtml(entry.saha||"(isimsiz)")+'</span></div>';
+    html += '<div class="job__meta"><span>'+formatTr(entry.tarih)+'</span></div>';
+    var extraBits = [];
+    cfg.extraFields.forEach(function(f){
+      var v = entry[f.key];
+      if(f.type==="checkbox"){ if(v) extraBits.push(f.label); }
+      else if(v){ extraBits.push(v); }
+    });
+    if(extraBits.length) html += '<div class="job__notes-preview">'+escapeHtml(extraBits.join(" · "))+'</div>';
+    if(entry.notlar) html += '<div class="job__notes-preview">'+escapeHtml(entry.notlar)+'</div>';
+    html += '</div>';
+    html += '<div class="job__chevron">'+(expanded?"▲":"▼")+'</div>';
+    html += '</div>';
+    if(expanded) html += renderGunlukBody(key, entry);
+    html += '</div>';
+    return html;
+  }
+
+  function renderGunlukField(key, entry, f){
+    var val = entry[f.key];
+    var html = '<div class="field"><label>'+escapeHtml(f.label)+'</label>';
+    if(f.type==="select"){
+      html += '<select data-gfield="'+f.key+'" data-section="'+key+'" data-id="'+entry.id+'"><option value="">Seçin</option>';
+      f.options.forEach(function(o){ html += '<option'+(val===o?' selected':'')+'>'+escapeHtml(o)+'</option>'; });
+      html += '</select>';
+    } else if(f.type==="checkbox"){
+      html += '<label style="display:flex;align-items:center;gap:8px;padding:8px 0;"><input type="checkbox" data-gfield="'+f.key+'" data-section="'+key+'" data-id="'+entry.id+'"'+(val?' checked':'')+' style="width:20px;height:20px;"> '+(val?"Evet":"Hayır")+'</label>';
+    } else if(f.type==="number"){
+      html += '<input type="number" data-gfield="'+f.key+'" data-section="'+key+'" data-id="'+entry.id+'" placeholder="'+escapeHtml(f.placeholder||"")+'" value="'+escapeHtml(val||"")+'">';
+    } else {
+      html += '<input type="text" data-gfield="'+f.key+'" data-section="'+key+'" data-id="'+entry.id+'" placeholder="'+escapeHtml(f.placeholder||"")+'" value="'+escapeHtml(val||"")+'">';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderGunlukBody(key, entry){
+    var cfg = GUNLUK_CONFIG[key];
+    var html = '<div class="job__body"><div class="job__body-inner">';
+
+    html += '<div class="field-row">';
+    html += '<div class="field"><label>'+escapeHtml(cfg.sahaLabel)+'</label><input type="text" data-gfield="saha" data-section="'+key+'" data-id="'+entry.id+'" value="'+escapeHtml(entry.saha||"")+'"></div>';
+    html += '<div class="field"><label>Tarih</label><input type="date" data-gfield="tarih" data-section="'+key+'" data-id="'+entry.id+'" value="'+escapeHtml(entry.tarih||"")+'"></div>';
+    html += '</div>';
+
+    var i;
+    for(i=0;i<cfg.extraFields.length;i+=2){
+      html += '<div class="field-row">';
+      html += renderGunlukField(key, entry, cfg.extraFields[i]);
+      if(cfg.extraFields[i+1]) html += renderGunlukField(key, entry, cfg.extraFields[i+1]);
+      html += '</div>';
+    }
+
+    html += '<div class="durum-switch">';
+    [["bekleyen","Bekleyen"],["tamamlandi","Tamamlandı"],["sorun","Sorun"]].forEach(function(d){
+      html += '<button class="durum-btn' + ((entry.durum||"bekleyen")===d[0]?' active':'') + '" data-action="g-set-durum" data-section="'+key+'" data-id="'+entry.id+'" data-durum="' + d[0] + '">' + d[1] + '</button>';
+    });
+    html += '</div>';
+
+    html += '<div class="field job__notes"><label>Notlar</label><textarea data-gfield="notlar" data-section="'+key+'" data-id="'+entry.id+'" placeholder="Not...">'+escapeHtml(entry.notlar||"")+'</textarea></div>';
+
+    html += '<div class="job__footer">';
+    html += '<div class="job__report-actions">';
+    html += '<button class="btn-card" data-action="g-copy-report" data-section="'+key+'" data-id="'+entry.id+'">Metni Kopyala</button>';
+    html += '<button class="btn-card" data-action="g-print-report" data-section="'+key+'" data-id="'+entry.id+'">Yazdır</button>';
+    html += '<button class="btn-card" data-action="g-pdf" data-section="'+key+'" data-id="'+entry.id+'">PDF İndir</button>';
+    html += '</div>';
+    html += '<button class="btn-danger-text" data-action="g-delete" data-section="'+key+'" data-id="'+entry.id+'">Sil</button>';
+    html += '</div>';
+
+    html += '</div></div>';
+    return html;
+  }
+
+  function renderGunlukDraftField(f, d){
+    var val = d[f.key];
+    var html = '<div class="field"><label>'+escapeHtml(f.label)+'</label>';
+    if(f.type==="select"){
+      html += '<select data-gdraft-field="'+f.key+'"><option value="">Seçin</option>';
+      f.options.forEach(function(o){ html += '<option'+(val===o?' selected':'')+'>'+escapeHtml(o)+'</option>'; });
+      html += '</select>';
+    } else if(f.type==="checkbox"){
+      html += '<label style="display:flex;align-items:center;gap:8px;padding:8px 0;"><input type="checkbox" data-gdraft-field="'+f.key+'"'+(val?' checked':'')+' style="width:20px;height:20px;"> Evet</label>';
+    } else if(f.type==="number"){
+      html += '<input type="number" data-gdraft-field="'+f.key+'" placeholder="'+escapeHtml(f.placeholder||"")+'" value="'+escapeHtml(val||"")+'">';
+    } else {
+      html += '<input type="text" data-gdraft-field="'+f.key+'" placeholder="'+escapeHtml(f.placeholder||"")+'" value="'+escapeHtml(val||"")+'">';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function renderGunlukForm(key){
+    var cfg = GUNLUK_CONFIG[key];
+    var d = ui.gDraft[key];
+    var html = '<div class="newjob-form" data-section="'+key+'"><h3>Yeni ' + escapeHtml(cfg.entryNoun) + '</h3>';
+    html += '<div class="field-row">';
+    html += '<div class="field"><label>'+escapeHtml(cfg.sahaLabel)+'</label><input type="text" data-gdraft-field="saha" placeholder="'+escapeHtml(cfg.sahaPlaceholder)+'" value="'+escapeHtml(d.saha||"")+'"></div>';
+    html += '<div class="field"><label>Tarih</label><input type="date" data-gdraft-field="tarih" value="'+escapeHtml(d.tarih||todayStr())+'"></div>';
+    html += '</div>';
+    var i;
+    for(i=0;i<cfg.extraFields.length;i+=2){
+      html += '<div class="field-row">';
+      html += renderGunlukDraftField(cfg.extraFields[i], d);
+      if(cfg.extraFields[i+1]) html += renderGunlukDraftField(cfg.extraFields[i+1], d);
+      html += '</div>';
+    }
+    html += '<div class="form-actions">';
+    html += '<button class="btn btn-ghost" data-action="g-cancel-form" data-section="'+key+'">İptal</button>';
+    html += '<button class="btn btn-accent" data-action="g-submit-form" data-section="'+key+'">Ekle</button>';
+    html += '</div></div>';
+    return html;
+  }
+
   /* ---------------- EVENTS ---------------- */
 
   function bindTextInputs(){
     document.querySelectorAll("[data-field]").forEach(function(el){
-      el.addEventListener("input", function(){
+      var evt = (el.type==="checkbox") ? "change" : "input";
+      el.addEventListener(evt, function(){
         var job = getJob(el.getAttribute("data-job-id"));
         if(!job) return;
-        job[el.getAttribute("data-field")] = el.value;
+        job[el.getAttribute("data-field")] = (el.type==="checkbox") ? el.checked : el.value;
         scheduleSave();
       });
     });
@@ -903,10 +1416,42 @@
     var d2 = document.getElementById("draft-tarih");
     var d3 = document.getElementById("draft-ilce");
     var d4 = document.getElementById("draft-blok");
+    var d5 = document.getElementById("draft-bodrum");
+    var d6 = document.getElementById("draft-normalkat");
+    var d7 = document.getElementById("draft-subasman");
+    var d8 = document.getElementById("draft-ustyapi");
+    var d9 = document.getElementById("draft-betonsinifi");
     if(d1) d1.addEventListener("input", function(){ ui.draft.isAdi = d1.value; });
     if(d2) d2.addEventListener("input", function(){ ui.draft.tarih = d2.value; });
     if(d3) d3.addEventListener("change", function(){ ui.draft.ilce = d3.value; });
     if(d4) d4.addEventListener("input", function(){ ui.draft.blokSayisi = d4.value; });
+    if(d5) d5.addEventListener("input", function(){ ui.draft.bodrumSayisi = d5.value; });
+    if(d6) d6.addEventListener("input", function(){ ui.draft.normalKatSayisi = d6.value; });
+    if(d7) d7.addEventListener("change", function(){ ui.draft.subasman = d7.checked; });
+    if(d8) d8.addEventListener("change", function(){ ui.draft.ustYapi = d8.value; });
+    if(d9) d9.addEventListener("change", function(){ ui.draft.betonSinifi = d9.value; });
+
+    document.querySelectorAll("[data-gfield]").forEach(function(el){
+      var evt = (el.tagName==="SELECT" || el.type==="checkbox") ? "change" : "input";
+      el.addEventListener(evt, function(){
+        var key = el.getAttribute("data-section");
+        var entry = gGetEntry(key, el.getAttribute("data-id"));
+        if(!entry) return;
+        var field = el.getAttribute("data-gfield");
+        entry[field] = (el.type==="checkbox") ? el.checked : el.value;
+        gScheduleSave(key);
+      });
+    });
+    document.querySelectorAll("[data-gdraft-field]").forEach(function(el){
+      var evt2 = (el.tagName==="SELECT" || el.type==="checkbox") ? "change" : "input";
+      el.addEventListener(evt2, function(){
+        var section = el.closest("[data-section]");
+        if(!section) return;
+        var key = section.getAttribute("data-section");
+        var field = el.getAttribute("data-gdraft-field");
+        ui.gDraft[key][field] = (el.type==="checkbox") ? el.checked : el.value;
+      });
+    });
   }
 
   document.addEventListener("click", function(e){
@@ -915,13 +1460,16 @@
     var action = el.getAttribute("data-action");
     var jobId = el.getAttribute("data-job-id");
 
-    if(action==="switch-tab"){
+    if(action==="switch-app-tab"){
+      ui.appTab = el.getAttribute("data-apptab");
+      render();
+    } else if(action==="switch-tab"){
       ui.tab = el.getAttribute("data-tab");
       ui.expanded = null;
       render();
     } else if(action==="toggle-form"){
       ui.showForm = !ui.showForm;
-      if(ui.showForm) ui.draft = { isAdi:"", tarih: todayStr(), ilce:"", blokSayisi:"" };
+      if(ui.showForm) ui.draft = { isAdi:"", tarih: todayStr(), ilce:"", blokSayisi:"", bodrumSayisi:"", normalKatSayisi:"", subasman:false, ustYapi:"Yok", betonSinifi:"" };
       render();
     } else if(action==="cancel-form"){
       ui.showForm = false;
@@ -940,7 +1488,12 @@
         durum: "bekleyen",
         notlar: "",
         checklist: {},
-        checklistNotlar: {}
+        checklistNotlar: {},
+        bodrumSayisi: parseInt(ui.draft.bodrumSayisi,10) || 0,
+        normalKatSayisi: parseInt(ui.draft.normalKatSayisi,10) || 0,
+        subasman: !!ui.draft.subasman,
+        ustYapi: ui.draft.ustYapi || "Yok",
+        betonSinifi: ui.draft.betonSinifi || ""
       };
       if(blokSayisi >= 2){
         newJob.bloklar = [];
@@ -989,12 +1542,62 @@
       copyReport(jobId);
     } else if(action==="print-report"){
       printReport(jobId);
-    } else if(action==="reset-data"){
-      if(confirm("Bu, ekipteki HERKESİN verilerini tamamen silecek. Bu işlem geri alınamaz. Emin misin?")){
-        jobs = [];
-        saveJobsNow();
+    } else if(action==="pdf-report"){
+      downloadGenelPdf(jobId);
+    } else if(action==="g-toggle-form"){
+      var sk = el.getAttribute("data-section");
+      ui.gShowForm[sk] = !ui.gShowForm[sk];
+      if(ui.gShowForm[sk]) ui.gDraft[sk] = { tarih: todayStr() };
+      render();
+    } else if(action==="g-cancel-form"){
+      ui.gShowForm[el.getAttribute("data-section")] = false;
+      render();
+    } else if(action==="g-submit-form"){
+      var sk2 = el.getAttribute("data-section");
+      var cfg2 = GUNLUK_CONFIG[sk2];
+      var d2v = ui.gDraft[sk2] || {};
+      if(!d2v.saha || !d2v.saha.trim()){ alert(cfg2.sahaLabel + " boş olamaz."); return; }
+      var newEntry = { id: genId(), saha: d2v.saha.trim(), tarih: d2v.tarih || todayStr(), notlar:"", durum:"bekleyen" };
+      cfg2.extraFields.forEach(function(f){ newEntry[f.key] = (d2v[f.key]!=null) ? d2v[f.key] : (f.type==="checkbox"?false:""); });
+      gData[sk2].unshift(newEntry);
+      ui.gShowForm[sk2] = false;
+      ui.gTab[sk2] = "bekleyen";
+      gSaveNow(sk2);
+      render();
+    } else if(action==="g-expand"){
+      var sk3 = el.getAttribute("data-section"), id3 = el.getAttribute("data-id");
+      ui.gExpanded[sk3] = (ui.gExpanded[sk3]===id3) ? null : id3;
+      render();
+    } else if(action==="g-switch-tab"){
+      var sk4 = el.getAttribute("data-section");
+      ui.gTab[sk4] = el.getAttribute("data-tab");
+      render();
+    } else if(action==="g-set-durum"){
+      var sk5 = el.getAttribute("data-section"), id5 = el.getAttribute("data-id");
+      var entry5 = gGetEntry(sk5, id5);
+      if(entry5){ entry5.durum = el.getAttribute("data-durum"); gSaveNow(sk5); render(); }
+    } else if(action==="g-delete"){
+      var sk8=el.getAttribute("data-section"), id8=el.getAttribute("data-id");
+      if(confirm("Bu kayıt silinsin mi? Bu işlem geri alınamaz.")){
+        gData[sk8] = gData[sk8].filter(function(e){return e.id!==id8;});
+        ui.gExpanded[sk8]=null;
+        gSaveNow(sk8);
         render();
       }
+    } else if(action==="g-copy-report"){
+      gCopyReport(el.getAttribute("data-section"), el.getAttribute("data-id"));
+    } else if(action==="g-print-report"){
+      gPrintReport(el.getAttribute("data-section"), el.getAttribute("data-id"));
+    } else if(action==="g-pdf"){
+      gDownloadPdf(el.getAttribute("data-section"), el.getAttribute("data-id"));
+    } else if(action==="g-quick-toggle"){
+      var skq=el.getAttribute("data-section"), idq=el.getAttribute("data-id");
+      var entryq = gGetEntry(skq, idq);
+      if(!entryq) return;
+      var curq = entryq.durum || "bekleyen";
+      entryq.durum = curq==="bekleyen" ? "tamamlandi" : (curq==="tamamlandi" ? "sorun" : "bekleyen");
+      gSaveNow(skq);
+      render();
     }
   });
 
@@ -1006,11 +1609,13 @@
     render();
   }
   try{
-    loadJobs().then(start).catch(function(e){ console.error(e); jobs = jobs || []; start(); });
+    Promise.all([ loadJobs(), gLoadSection("gunluk-is"), gLoadSection("gunluk-beton") ])
+      .then(start)
+      .catch(function(e){ console.error(e); start(); });
   }catch(e){
-    console.error(e); jobs = []; start();
+    console.error(e); start();
   }
-  setTimeout(start, 2500);
+  setTimeout(start, 3000);
 })();
 </script>
 </body>
