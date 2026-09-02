@@ -448,7 +448,8 @@
       extraFields: [
         { key:"eleman", label:"Döküm Elemanı", type:"select", options:["Temel","Perde","Kolon, Kiriş, Döşeme","Kiriş, Döşeme","Kolon, Perde","Diğer"] },
         { key:"sinif", label:"Beton Sınıfı", type:"select", options:["C25/30","C30/37","C35/45","Diğer"] },
-        { key:"miktar", label:"Miktar (m³)", type:"number", placeholder:"örn. 45" }
+        { key:"miktar", label:"Miktar (m³)", type:"number", placeholder:"örn. 45" },
+        { key:"numuneAdeti", label:"Alınacak Numune Adeti", type:"number", placeholder:"örn. 3" }
       ]
     }
   };
@@ -896,35 +897,38 @@
     var job = getJob(jobId); if(!job) return;
     var jsPDFCtor = window.jspdf.jsPDF;
     var doc = new jsPDFCtor();
+    setupPdfFont(doc);
     var prog = jobProgress(job);
     var fails = failedItems(job);
     var y = 16;
-    doc.setFontSize(15); doc.text("SANTIYE KONTROL RAPORU", 14, y); y += 8;
+    doc.setFontSize(15); doc.text("ŞANTİYE KONTROL RAPORU", 14, y); y += 8;
     doc.setFontSize(10);
-    doc.text("Is: " + trToAscii(job.isAdi||""), 14, y); y += 6;
-    if(job.ilce){ doc.text("Ilce: " + trToAscii(job.ilce), 14, y); y += 6; }
+    doc.text("İş: " + (job.isAdi||""), 14, y); y += 6;
+    if(job.ilce){ doc.text("İlçe: " + job.ilce, 14, y); y += 6; }
     doc.text("Tarih: " + formatTr(job.tarih), 14, y); y += 6;
-    doc.text("Durum: " + trToAscii(durumLabel(job.durum)), 14, y); y += 6;
-    if(katDurumuSummary(job)){ doc.text("Kat Durumu: " + trToAscii(katDurumuSummary(job)), 14, y); y += 6; }
-    if(job.betonSinifi){ doc.text("Beton Sinifi: " + trToAscii(job.betonSinifi), 14, y); y += 6; }
-    doc.text("Ilerleme: " + prog.marked + "/" + prog.total + " madde, " + prog.fails + " uygunsuz", 14, y); y += 8;
+    doc.text("Durum: " + durumLabel(job.durum), 14, y); y += 6;
+    if(katDurumuSummary(job)){ doc.text("Kat Durumu: " + katDurumuSummary(job), 14, y); y += 6; }
+    if(job.betonSinifi){ doc.text("Beton Sınıfı: " + job.betonSinifi, 14, y); y += 6; }
+    if(job.istinat && job.istinat!=="Yok"){ doc.text("İstinat Duvarı: " + job.istinat, 14, y); y += 6; }
+    doc.text("İlerleme: " + prog.marked + "/" + prog.total + " madde, " + prog.fails + " uygunsuz", 14, y); y += 8;
     if(fails.length){
       doc.setFontSize(12); doc.text("Uygunsuz Maddeler", 14, y); y += 4;
-      doc.autoTable({ startY:y, head:[["Grup / Madde","Not"]], body: fails.map(function(f){ return [trToAscii(f.groupLabel+": "+f.text), trToAscii(f.note||"-")]; }), styles:{fontSize:8} });
+      doc.autoTable({ startY:y, head:[["Grup / Madde","Not"]], body: fails.map(function(f){ return [f.groupLabel+": "+f.text, f.note||"-"]; }), styles:{fontSize:8, font:"TurkceFont"}, headStyles:{font:"TurkceFont"} });
       y = doc.lastAutoTable.finalY + 8;
     }
+    var pdfGroups = groupsForJob(job);
     jobBlocks(job).forEach(function(b){
-      if(y > 250){ doc.addPage(); y = 16; }
-      if(b.label){ doc.setFontSize(12); doc.text(trToAscii(b.label), 14, y); y += 6; }
+      if(y > 250){ doc.addPage(); setupPdfFont(doc); y = 16; }
+      if(b.label){ doc.setFontSize(12); doc.text(b.label, 14, y); y += 6; }
       var rows = [];
-      CHECKLIST_GROUPS.forEach(function(g){
+      pdfGroups.forEach(function(g){
         g.items.forEach(function(it){
           var st = (b.target.checklist && b.target.checklist[it.id]) || "-";
-          var lbl = st==="uygun" ? "Uygun" : (st==="uygunDegil" ? "Uygun Degil" : "Degerlendirilmedi");
-          rows.push([trToAscii(g.label), trToAscii(it.text), lbl]);
+          var lbl = st==="uygun" ? "Uygun" : (st==="uygunDegil" ? "Uygun Değil" : "Değerlendirilmedi");
+          rows.push([g.label, it.text, lbl]);
         });
       });
-      doc.autoTable({ startY:y, head:[["Grup","Madde","Durum"]], body: rows, styles:{fontSize:7} });
+      doc.autoTable({ startY:y, head:[["Grup","Madde","Durum"]], body: rows, styles:{fontSize:7, font:"TurkceFont"}, headStyles:{font:"TurkceFont"} });
       y = doc.lastAutoTable.finalY + 10;
     });
     doc.save(safeFilename(job.isAdi) + ".pdf");
@@ -981,19 +985,20 @@
     var cfg = GUNLUK_CONFIG[key];
     var jsPDFCtor = window.jspdf.jsPDF;
     var doc = new jsPDFCtor();
+    setupPdfFont(doc);
     var y = 16;
-    doc.setFontSize(15); doc.text(trToAscii(cfg.title).toUpperCase() + " RAPORU", 14, y); y += 8;
+    doc.setFontSize(15); doc.text(cfg.title.toUpperCase() + " RAPORU", 14, y); y += 8;
     doc.setFontSize(10);
-    doc.text(trToAscii(cfg.sahaLabel) + ": " + trToAscii(entry.saha||""), 14, y); y += 6;
+    doc.text(cfg.sahaLabel + ": " + (entry.saha||""), 14, y); y += 6;
     doc.text("Tarih: " + formatTr(entry.tarih), 14, y); y += 6;
-    doc.text("Durum: " + trToAscii(durumLabel(entry.durum||"bekleyen")), 14, y); y += 6;
+    doc.text("Durum: " + durumLabel(entry.durum||"bekleyen"), 14, y); y += 6;
     cfg.extraFields.forEach(function(f){
       var v = entry[f.key];
-      if(f.type==="checkbox") v = v ? "Evet" : "Hayir";
-      if(v!=null && v!=="") { doc.text(trToAscii(f.label) + ": " + trToAscii(String(v)), 14, y); y += 6; }
+      if(f.type==="checkbox") v = v ? "Evet" : "Hayır";
+      if(v!=null && v!=="") { doc.text(f.label + ": " + String(v), 14, y); y += 6; }
     });
     y += 4;
-    if(entry.notlar){ doc.setFontSize(10); doc.text("Notlar: " + trToAscii(entry.notlar), 14, y); }
+    if(entry.notlar){ doc.setFontSize(10); doc.text("Notlar: " + entry.notlar, 14, y); }
     doc.save(safeFilename(entry.saha) + ".pdf");
   }
 
