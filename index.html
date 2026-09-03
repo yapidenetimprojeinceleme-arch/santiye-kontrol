@@ -474,6 +474,11 @@
   var saveTimer = null;
 
   function todayStr(){ return new Date().toISOString().slice(0,10); }
+  function tomorrowStr(){
+    var d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().slice(0,10);
+  }
   function genId(){ return "j" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
   function blokHarfi(index){
     var s = "", n = index + 1;
@@ -1345,12 +1350,18 @@
 
   function renderGunlukGrouped(key, list){
     var today = todayStr();
+    var tomorrow = tomorrowStr();
     var todayList = list.filter(function(e){ return e.tarih===today; });
-    var otherList = list.filter(function(e){ return e.tarih!==today; });
+    var tomorrowList = list.filter(function(e){ return e.tarih===tomorrow; });
+    var otherList = list.filter(function(e){ return e.tarih!==today && e.tarih!==tomorrow; });
     var html = "";
     if(todayList.length){
       html += '<div class="day-divider">Bugün</div>';
       todayList.forEach(function(e){ html += renderGunlukCard(key, e); });
+    }
+    if(tomorrowList.length){
+      html += '<div class="day-divider">Yarın</div>';
+      tomorrowList.forEach(function(e){ html += renderGunlukCard(key, e); });
     }
     if(otherList.length){
       html += '<div class="day-divider">Diğer Günler</div>';
