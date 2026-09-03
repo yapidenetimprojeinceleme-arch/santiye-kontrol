@@ -309,17 +309,6 @@
       "Filiz boyu ve donatı sayıları kontrol edildi. Başlık (ayna) donatı sayısı ve şekli kolon aplikasyonuna uygundur.",
       "Aks aralıkları tek tek ölçüldü, kolonun doğru yere konumlandırılmasına dikkat edildi."
     ]},
-    { key:"istinat", label:"İstinat", structural:true, conditional:"istinat", items:[
-      "Temel altı grobeton döküldü mü?",
-      "Temel donatıları (sayı ve aralıklar) uygun mu?",
-      "Temel derinliği ve genişliği projeye uygun mu?",
-      "İstinat perde kalıbı projeye uygun kuruldu.",
-      "Perde filiz boyları kontrol edildi mi?",
-      "İstinat perde donatısı (düşey ve yatay) proje ölçü ve aralıklarına uygundur.",
-      "İstinat perde yüksekliği ve kalınlığı projeye uygundur.",
-      "İstinat arkası drenaj sistemi (drenaj borusu, filtre malzemesi) projeye uygun yapıldı.",
-      "İstinat perde arkası su yalıtımı yapıldı."
-    ]},
     { key:"subasman", label:"Subasman Kat", structural:true, conditional:"subasman", items:[
       "Subasman perde/duvar kalıbı projeye uygun kuruldu.",
       "Subasman donatısı (düşey ve yatay) proje ölçü ve aralıklarına uygundur.",
@@ -374,11 +363,26 @@
   });
   function groupsForJob(job){
     return CHECKLIST_GROUPS.filter(function(g){
-      if(g.conditional === "istinat") return !!(job.istinat && job.istinat !== "Yok");
       if(g.conditional === "subasman") return !!job.subasman;
       return true;
     });
   }
+  // İstinat bloklardan bağımsız: birden çok bloklu işlerde bile TEK, iş seviyesinde
+  // takip edilir (her blokta ayrı ayrı tekrar etmez) - her zaman job.checklist/job.checklistNotlar
+  // üzerinden okunur/yazılır, blok var olsa bile.
+  var ISTINAT_GROUP = { key:"istinat", label:"İstinat", structural:true, items:[
+    "Temel altı grobeton döküldü mü?",
+    "Temel donatıları (sayı ve aralıklar) uygun mu?",
+    "Temel derinliği ve genişliği projeye uygun mu?",
+    "İstinat perde kalıbı projeye uygun kuruldu.",
+    "Perde filiz boyları kontrol edildi mi?",
+    "İstinat perde donatısı (düşey ve yatay) proje ölçü ve aralıklarına uygundur.",
+    "İstinat perde yüksekliği ve kalınlığı projeye uygundur.",
+    "İstinat arkası drenaj sistemi (drenaj borusu, filtre malzemesi) projeye uygun yapıldı.",
+    "İstinat perde arkası su yalıtımı yapıldı."
+  ]};
+  ISTINAT_GROUP.items = ISTINAT_GROUP.items.map(function(text, i){ return { id: "istinat-" + (i+1), text: text }; });
+  function jobHasIstinat(job){ return !!(job.istinat && job.istinat !== "Yok"); }
 
   var GAZIANTEP_ILCELER = ["Şahinbey","Şehitkamil","Oğuzeli","Nizip","Araban","İslahiye","Karkamış","Nurdağı","Yavuzeli"];
   function ilceOptionsHtml(selected){
@@ -441,7 +445,7 @@
     "gunluk-beton": {
       title: "Günlük Beton Takibi",
       entryNoun: "Döküm",
-      sahaLabel: "Blok Adı",
+      sahaLabel: "İş Adı",
       sahaPlaceholder: "A Blok, B Blok vs.",
       firebasePath: "gunluk_beton",
       localKey: "gunluk-beton-v1",
@@ -649,6 +653,10 @@
       var p = targetProgress(b.target, groups);
       marked += p.marked; fails += p.fails; total += p.total;
     });
+    if(jobHasIstinat(job)){
+      var ip = targetProgress(job, [ISTINAT_GROUP]);
+      marked += ip.marked; fails += ip.fails; total += ip.total;
+    }
     return { marked:marked, fails:fails, total:total };
   }
   function failedItems(job){
@@ -661,6 +669,9 @@
         out.push(item);
       });
     });
+    if(jobHasIstinat(job)){
+      out = out.concat(targetFailedItems(job, [ISTINAT_GROUP]));
+    }
     return out;
   }
 
@@ -840,6 +851,15 @@
         html += '</table>';
       });
     });
+    if(jobHasIstinat(job)){
+      html += '<h3 class="print-blok-title">İstinat</h3><h4>' + ISTINAT_GROUP.label + '</h4><table class="print-items">';
+      ISTINAT_GROUP.items.forEach(function(it){
+        var st = (job.checklist && job.checklist[it.id]) || "-";
+        var label = st==="uygun" ? "Uygun" : (st==="uygunDegil" ? "Uygun Değil" : "Değerlendirilmedi");
+        html += '<tr><td class="print-mark">' + (st==="uygun"?"✓":st==="uygunDegil"?"✕":"–") + '</td><td>' + escapeHtml(it.text) + '</td><td>' + label + '</td></tr>';
+      });
+      html += '</table>';
+    }
     if(job.notlar) html += '<h2>Genel Notlar</h2><p>' + escapeHtml(job.notlar).replace(/\n/g,'<br>') + '</p>';
     html += '<div class="print-sign">Kontrol Eden: ______________________ &nbsp;&nbsp;&nbsp; İmza: ______________________</div>';
     return html;
@@ -1273,6 +1293,9 @@
     } else {
       html += renderStackAndChips(job, structuralGroups, extraGroups);
       html += renderGroups(job, job, null, groups);
+    }
+    if(jobHasIstinat(job)){
+      html += '<div style="margin-top:14px;">' + renderGroups(job, job, null, [ISTINAT_GROUP]) + '</div>';
     }
     html += '</div>';
     return html;
