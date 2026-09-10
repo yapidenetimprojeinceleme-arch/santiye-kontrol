@@ -319,28 +319,31 @@
       "Subasman tesisat/geçiş boşlukları projeye uygun bırakıldı."
     ]},
     { key:"bodrum", label:"Bodrum Kat", structural:true, items:[
-      "Bodrum kat yüksekliği, kiriş ölçüleri ve döşeme derinliği uygundur.",
-      "Bodrum kat kolon ve perde filiz boyu ve sayısı uygundur.",
-      "Bodrum etriye aralıkları, kiriş açılımları, ilaveler ve tellemeler uygundur.",
-      "Kuranglez şekli ve ölçüleri uygundur. Bina girişine denk gelen kuranglez yoktur.",
-      "Bodrum perde yalıtımı projesine uygun yapıldı.",
-      "Merdiven genişliği, kollar arası mesafe, sahanlık ölçüleri ve rıht uygundur.",
-      "Bodrum tavanında bina giriş kotuna denk gelen döşeme kotunun farklı olduğuna dikkat edildi.",
-      "Şaft sayısı ve çaplarına dikkat edildi.",
-      "Donatıların bitiş noktalarında gönye var mı?"
+      { text:"Bodrum kat yüksekliği, kiriş ölçüleri ve döşeme derinliği uygundur.", visit:1 },
+      { text:"Bodrum kat kolon ve perde filiz boyu ve sayısı uygundur.", visit:1 },
+      { text:"Bodrum etriye aralıkları, kiriş açılımları, ilaveler ve tellemeler uygundur.", visit:2 },
+      { text:"Kuranglez şekli ve ölçüleri uygundur. Bina girişine denk gelen kuranglez yoktur.", visit:1 },
+      { text:"Bodrum perde yalıtımı projesine uygun yapıldı.", visit:1 },
+      { text:"Merdiven genişliği, kollar arası mesafe, sahanlık ölçüleri ve rıht uygundur.", visit:1 },
+      { text:"Bodrum tavanında bina giriş kotuna denk gelen döşeme kotunun farklı olduğuna dikkat edildi.", visit:1 },
+      { text:"Şaft sayısı ve çaplarına dikkat edildi.", visit:1 },
+      { text:"Donatıların bitiş noktalarında gönye var mı?", visit:2 },
+      { text:"Bodrum kat döşemesi (tabliye) alt ve üst donatı aralıkları, mesnet ilave donatıları projeye uygundur.", visit:2 }
     ]},
     { key:"zemin", label:"Zemin Kat", structural:true, items:[
-      "Zemin kat yüksekliğine ve giriş kotunun döşeme ile aynı kot olup olmadığına dikkat edildi.",
-      "Zemin kat çıkmalarına ve çıkmaların altındaki konsol kirişlere dikkat edildi. Asma kat galeri boşluğuna dikkat edildi.",
-      "Filiz boyu, etriye ve çirozları uygundur. Başlık (ayna) donatı sayısı ve şekli kolon aplikasyonuna uygundur.",
-      "Kiriş sıklaştırma aralıkları, montaj, gövde, düz sayıları ve tellemeler uygundur.",
-      "Balkon parapetleri projeye göre çift donatılı ve uygun yükseklikte yapıldı."
+      { text:"Zemin kat yüksekliğine ve giriş kotunun döşeme ile aynı kot olup olmadığına dikkat edildi.", visit:1 },
+      { text:"Zemin kat çıkmalarına ve çıkmaların altındaki konsol kirişlere dikkat edildi. Asma kat galeri boşluğuna dikkat edildi.", visit:1 },
+      { text:"Filiz boyu, etriye ve çirozları uygundur. Başlık (ayna) donatı sayısı ve şekli kolon aplikasyonuna uygundur.", visit:1 },
+      { text:"Kiriş sıklaştırma aralıkları, montaj, gövde, düz sayıları ve tellemeler uygundur.", visit:2 },
+      { text:"Balkon parapetleri projeye göre çift donatılı ve uygun yükseklikte yapıldı.", visit:2 },
+      { text:"Döşeme (tabliye) alt ve üst donatı aralıkları, mesnet ilave donatıları projeye uygundur.", visit:2 }
     ]},
     { key:"normal", label:"Normal Kat", structural:true, items:[
-      "Normal kat filiz boyu ve sayısı, kiriş açılımları adet ve çapları uygundur.",
-      "Normal kat yüksekliği, konsollar ve döşeme kalınlığı uygundur. Farklı döşeme kotu yoktur.",
-      "Normal kat şaft ölçülerine dikkat edildi, şaftların etrafına çapraz donatı attırıldı.",
-      "Balkon parapetleri projeye göre çift donatılı ve uygun yükseklikte yapıldı."
+      { text:"Normal kat filiz boyu ve sayısı, kiriş açılımları adet ve çapları uygundur.", visit:1 },
+      { text:"Normal kat yüksekliği, konsollar ve döşeme kalınlığı uygundur. Farklı döşeme kotu yoktur.", visit:1 },
+      { text:"Normal kat şaft ölçülerine dikkat edildi, şaftların etrafına çapraz donatı attırıldı.", visit:1 },
+      { text:"Balkon parapetleri projeye göre çift donatılı ve uygun yükseklikte yapıldı.", visit:2 },
+      { text:"Normal kat döşemesi (tabliye) alt ve üst donatı aralıkları, mesnet ilave donatıları projeye uygundur.", visit:2 }
     ]},
     { key:"sonkat", label:"Son Kat / Çatı", structural:true, items:[
       "Son kat kolon filiz gönyeleri yapılmış mı, çatı saçağı ölçüsü uygun mu?",
@@ -360,7 +363,11 @@
     ]}
   ];
   CHECKLIST_GROUPS.forEach(function(g){
-    g.items = g.items.map(function(text, i){ return { id: g.key + "-" + (i+1), text: text }; });
+    g.items = g.items.map(function(raw, i){
+      var text = (typeof raw === "string") ? raw : raw.text;
+      var visit = (typeof raw === "string") ? 1 : (raw.visit || 1);
+      return { id: g.key + "-" + (i+1), text: text, visit: visit };
+    });
   });
   function groupsForJob(job){
     return CHECKLIST_GROUPS.filter(function(g){
@@ -849,7 +856,7 @@
       if(b.label) html += '<h3 class="print-blok-title">' + escapeHtml(b.label) + '</h3>';
       reportGroups.forEach(function(g){
         html += '<h4>' + g.label + '</h4><table class="print-items">';
-        g.items.forEach(function(it){
+        g.items.slice().sort(function(a,b){ return (a.visit||1)-(b.visit||1); }).forEach(function(it){
           var st = (b.target.checklist && b.target.checklist[it.id]) || "-";
           var label = st==="uygun" ? "Uygun" : (st==="uygunDegil" ? "Uygun Değil" : "Değerlendirilmedi");
           html += '<tr><td class="print-mark">' + (st==="uygun"?"✓":st==="uygunDegil"?"✕":"–") + '</td><td>' + escapeHtml(it.text) + '</td><td>' + label + '</td></tr>';
@@ -948,7 +955,7 @@
       if(b.label){ doc.setFontSize(12); doc.text(b.label, 14, y); y += 6; }
       var rows = [];
       pdfGroups.forEach(function(g){
-        g.items.forEach(function(it){
+        g.items.slice().sort(function(a,b){ return (a.visit||1)-(b.visit||1); }).forEach(function(it){
           var st = (b.target.checklist && b.target.checklist[it.id]) || "-";
           var lbl = st==="uygun" ? "Uygun" : (st==="uygunDegil" ? "Uygun Değil" : "Değerlendirilmedi");
           rows.push([g.label, it.text, lbl]);
@@ -1251,7 +1258,8 @@
       html += '<span class="group__title">' + (open?"▾ ":"▸ ") + g.label + '</span><span class="group__frac">' + (gp.ok+gp.fail) + '/' + gp.total + '</span></div>';
       if(open){
         html += '<div class="group__items">';
-        g.items.forEach(function(item){
+        var sortedItems = g.items.slice().sort(function(a,b){ return (a.visit||1)-(b.visit||1); });
+        sortedItems.forEach(function(item){
           var status = (target.checklist && target.checklist[item.id]) || "";
           var mark = status==="uygun" ? "✓" : (status==="uygunDegil" ? "✕" : "–");
           html += '<div class="item">';
