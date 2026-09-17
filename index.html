@@ -371,6 +371,7 @@
   });
   function groupsForJob(job){
     return CHECKLIST_GROUPS.filter(function(g){
+      if(g.key === "bodrum") return !!(parseInt(job.bodrumSayisi,10) >= 1);
       if(g.conditional === "subasman") return !!job.subasman;
       return true;
     });
