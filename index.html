@@ -393,9 +393,9 @@
   ISTINAT_GROUP.items = ISTINAT_GROUP.items.map(function(text, i){ return { id: "istinat-" + (i+1), text: text }; });
   function jobHasIstinat(job){ return !!(job.istinat && job.istinat !== "Yok"); }
 
-  var GAZIANTEP_ILCELER = ["Şahinbey","Şehitkamil","Oğuzeli","Nizip","Araban","İslahiye","Karkamış","Nurdağı","Yavuzeli"];
+  var GAZIANTEP_ILCELER = ["Büyükşehir","Şahinbey","Şehitkamil","Oğuzeli","Nizip","Araban","İslahiye","Karkamış","Nurdağı","Yavuzeli"];
   function ilceOptionsHtml(selected){
-    var html = '<option value="">İlçe seçin</option>';
+    var html = '<option value="">Belediye seçin</option>';
     GAZIANTEP_ILCELER.forEach(function(il){
       html += '<option value="' + il + '"' + (selected===il ? ' selected' : '') + '>' + il + '</option>';
     });
@@ -709,7 +709,7 @@
     });
     var result = [];
     order.forEach(function(key){
-      if(buckets[key].length) result.push({ label: key==="__none__" ? "İlçe Belirtilmemiş" : key, jobs: buckets[key] });
+      if(buckets[key].length) result.push({ label: key==="__none__" ? "Belediye Belirtilmemiş" : key, jobs: buckets[key] });
     });
     return result;
   }
@@ -1108,7 +1108,7 @@
         '<div class="field"><label>Tarih</label><input type="date" id="draft-tarih" value="' + escapeHtml(ui.draft.tarih) + '"></div>' +
       '</div>' +
       '<div class="field-row">' +
-        '<div class="field"><label>İlçe</label><select id="draft-ilce">' + ilceOptionsHtml(ui.draft.ilce) + '</select></div>' +
+        '<div class="field"><label>Belediye</label><select id="draft-ilce">' + ilceOptionsHtml(ui.draft.ilce) + '</select></div>' +
         '<div class="field"><label>Blok Sayısı</label><input type="number" min="0" id="draft-blok" placeholder="opsiyonel, çoklu blok" value="' + escapeHtml(ui.draft.blokSayisi) + '"></div>' +
       '</div>' +
       '<div class="field-row">' +
@@ -1188,7 +1188,7 @@
     html += '<div class="field"><label>Tarih</label><input type="date" data-field="tarih" data-job-id="' + job.id + '" value="' + escapeHtml(job.tarih) + '"></div>';
     html += '</div>';
     html += '<div class="field-row">';
-    html += '<div class="field"><label>İlçe</label><select data-field="ilce" data-job-id="' + job.id + '">' + ilceOptionsHtml(job.ilce||"") + '</select></div>';
+    html += '<div class="field"><label>Belediye</label><select data-field="ilce" data-job-id="' + job.id + '">' + ilceOptionsHtml(job.ilce||"") + '</select></div>';
     html += '</div>';
 
     html += '<div class="field-row">';
