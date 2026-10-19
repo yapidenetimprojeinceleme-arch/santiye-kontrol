@@ -148,7 +148,7 @@
   .job__fails-group{font-family:var(--font-m);font-size:0.66rem;background:var(--fail);color:#fff;padding:1px 6px;border-radius:8px;margin-right:6px;white-space:nowrap;}
   .job__fails-note{margin-top:3px;color:var(--fail);font-style:italic;font-size:0.8rem;}
   .job__fails-note--empty{opacity:0.65;}
-  .job__notes-preview{margin-top:6px;font-size:0.82rem;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .job__notes-preview{margin-top:6px;font-size:0.82rem;color:var(--ink-soft);overflow:hidden;white-space:pre-line;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;}
   .job__kat-summary{margin-top:6px;font-family:var(--font-m);font-size:0.76rem;color:var(--ink-soft);background:var(--paper-dim);display:inline-block;padding:3px 9px;border-radius:10px;}
   .job__chevron{font-family:var(--font-m);color:var(--ink-soft);font-size:0.9rem;padding-top:2px;}
 
@@ -1409,7 +1409,7 @@
       else if(v){ extraBits.push(v); }
     });
     if(extraBits.length) html += '<div class="job__notes-preview">'+escapeHtml(extraBits.join(" · "))+'</div>';
-    if(entry.notlar) html += '<div class="job__notes-preview">'+escapeHtml(entry.notlar)+'</div>';
+    if(entry.notlar) html += '<div class="job__notes-preview">'+escapeHtml(entry.notlar).replace(/\n/g,'<br>')+'</div>';
     html += '</div>';
     html += '<div class="job__chevron">'+(expanded?"▲":"▼")+'</div>';
     html += '</div>';
